@@ -85,7 +85,7 @@ public class LeadQR extends Activity {
         //Checking if current location is set using GPS provider
         if (current_location == null) {
             //if unable to find gps location
-            Toast.makeText(CON, "Unable to find GPS location", Toast.LENGTH_SHORT).show();
+            Toast.makeText(CON, "Unable to find GPS location. Searching for Network location...", Toast.LENGTH_LONG).show();
             network_location = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
             current_location = network_location;
             if (current_location == null) {
