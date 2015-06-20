@@ -97,7 +97,6 @@ public class LeadQR extends Activity {
                 syncDB(qrcode, current_location);
             }
         } else {
-            Toast.makeText(CON, current_location + "", Toast.LENGTH_SHORT).show();
             //Syncing with Parse database for the first time
             syncDB(qrcode, current_location);
         }
@@ -151,7 +150,6 @@ public class LeadQR extends Activity {
                         query.getInBackground(objectId, new GetCallback<ParseObject>() {
                             public void done(ParseObject parseUpdateObject, ParseException e) {
                                 if (e == null) {
-                                    System.out.println("here");
                                     ParseGeoPoint newGeoPoint = new ParseGeoPoint(current_location.getLatitude(), current_location.getLongitude());
                                     parseUpdateObject.put(KEY_LOCATION, newGeoPoint);
                                     parseUpdateObject.saveInBackground();
