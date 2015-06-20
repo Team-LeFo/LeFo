@@ -1,0 +1,59 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
+    android:layout_height="match_parent" android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    tools:context="com.groot.lefo.FollowCode">
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:id="@+id/linearLayout"
+        android:gravity="center_horizontal">
+
+        <Space
+            android:layout_width="match_parent"
+            android:layout_height="45dp"/>
+
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Enter Code Here"
+            android:textSize="40sp"
+            android:id="@+id/insertCode"
+            android:gravity="center"
+            android:inputType="number" />
+
+        <Space
+            android:layout_width="match_parent"
+            android:layout_height="45dp" />
+
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Start pursuit"
+            android:id="@+id/connectBTN"
+            android:textSize="@dimen/main_button_texts"
+            android:background="@android:color/transparent"
+            android:textColor="@color/abc_search_url_text"
+            android:onClick="connect"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:hint="or"
+            android:textSize="@dimen/main_button_texts"
+            android:textColor="@color/abc_search_url_text"
+            android:gravity="center" />
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Got a QR Code?"
+            android:id="@+id/qrCodeBTN"
+            android:textSize="@dimen/main_button_texts"
+            android:background="@android:color/transparent"
+            android:textColor="@color/abc_search_url_text"
+            android:onClick="qrCode"/>
+    </LinearLayout>
+</RelativeLayout>
