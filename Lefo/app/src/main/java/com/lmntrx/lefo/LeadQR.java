@@ -82,12 +82,25 @@ public class LeadQR extends Activity {
         gps_location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
         current_location = gps_location;
 
+        //LeFo_LocationListener is defined below
+        LocationListener locationListener = new LeFo_LocationListener();
+
         //Checking if current location is set using GPS provider
         if (current_location == null) {
             //if unable to find gps location
-            Toast.makeText(CON, "Unable to find GPS location. Searching for Network location...", Toast.LENGTH_LONG).show();
-            network_location = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
-            current_location = network_location;
+            //try again
+            if (locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)){
+                for (int i=0;i<50;i++){
+                    gps_location=locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+                    current_location=gps_location;
+                }
+            }
+            if (current_location==null){
+                //Searching for network location
+                Toast.makeText(CON, "Unable to find GPS location. Searching for Network location...", Toast.LENGTH_LONG).show();
+                network_location = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
+                current_location = network_location;
+            }
             if (current_location == null) {
                 //If due to some cause location is not found
                 Toast.makeText(CON, "Unable to find location", Toast.LENGTH_SHORT).show();
@@ -102,7 +115,6 @@ public class LeadQR extends Activity {
         }
 
 
-        LocationListener locationListener = new LeFo_LocationListener();                 //LeFo_LocationListener is defined below
 
         if (gps_location != null) {
             locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, MIN_TIME, MIN_DISTANCE, locationListener);
