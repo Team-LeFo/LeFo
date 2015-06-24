@@ -63,6 +63,9 @@ public class LeadQR extends Activity {
     public final long MIN_TIME = 5000; //5000ms=5s
     public final float MIN_DISTANCE = 2;//2m
 
+    //Activity
+    public final Activity leadQRActivity=this;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -90,21 +93,43 @@ public class LeadQR extends Activity {
             //if unable to find gps location
             //try again
             if (locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)){
-                for (int i=0;i<50;i++){
+                for (int i=0;i<1000;i++){
                     gps_location=locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
                     current_location=gps_location;
+                    if (current_location!=null){
+                        break;
+                    }
                 }
             }
             if (current_location==null){
                 //Searching for network location
-                Toast.makeText(CON, "Unable to find GPS location. Searching for Network location...", Toast.LENGTH_LONG).show();
                 network_location = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
                 current_location = network_location;
             }
             if (current_location == null) {
-                //If due to some cause location is not found
-                Toast.makeText(CON, "Unable to find location", Toast.LENGTH_SHORT).show();
-                return;
+                //trying again
+                for (int i=0;i<200;i++){
+                    gps_location=locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+                    current_location=gps_location;
+                    if (current_location!=null){
+                        break;
+                    }
+                }
+                if (current_location==null){
+                    //trying again
+                    for (int i=0;i<200;i++){
+                        network_location=locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
+                        current_location=network_location;
+                        if (current_location!=null){
+                            break;
+                        }
+                    }
+                    //If due to some cause location is not found
+                    if (current_location==null){
+                        restartActivityDialog();
+                        return;
+                    }
+                }
             } else {
                 //Syncing with Parse database for the first time
                 syncDB(qrcode, current_location);
@@ -115,7 +140,7 @@ public class LeadQR extends Activity {
         }
 
 
-
+        //Choosing appropriate location listener
         if (gps_location != null) {
             locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, MIN_TIME, MIN_DISTANCE, locationListener);
         } else {
@@ -123,6 +148,23 @@ public class LeadQR extends Activity {
         }
 
 
+    }
+
+    //Function for restarting LeadQR
+    private void restartActivityDialog() {
+        final AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setMessage("Due to some internal error location fetch was interrupted. Please restart activity")
+                .setTitle("Error")
+                .setCancelable(false)
+                .setPositiveButton("Restart", new DialogInterface.OnClickListener() {
+                    public void onClick(@SuppressWarnings("unused") final DialogInterface dialog, @SuppressWarnings("unused") final int id) {
+                        Intent intent = new Intent(CON, LeadQR.class);
+                        startActivity(intent);
+                        leadQRActivity.finish();   //Closing current instance of LeadQR
+                    }
+                });
+        final AlertDialog alert = builder.create();
+        alert.show();
     }
 
     //Random Code Generator
@@ -139,8 +181,6 @@ public class LeadQR extends Activity {
         parseObject.put(KEY_QRCODE, code);
         parseObject.put(KEY_LOCATION, geoPoint);
         parseObject.saveInBackground();
-
-
     }
 
     //Function for updating user Location
@@ -157,6 +197,7 @@ public class LeadQR extends Activity {
                         // Retrieving objectId
                         objectId = result.getObjectId();
                     }
+                    // Retrieving data from object
                     if (objectId != null) {
                         ParseQuery<ParseObject> query = ParseQuery.getQuery(PARSE_CLASS);
                         query.getInBackground(objectId, new GetCallback<ParseObject>() {
@@ -171,13 +212,12 @@ public class LeadQR extends Activity {
                             }
                         });
                     }
-                } else { //Incase of an error
+                } else {
+                    //Incase of an unknown error
                     Toast.makeText(CON, e.getMessage(), Toast.LENGTH_LONG).show();
                 }
             }
         });
-
-
     }
 
     //InnerClass LocationListener
@@ -193,7 +233,6 @@ public class LeadQR extends Activity {
                     old_location = current_location;
                 }
             }
-
         }
 
         @Override

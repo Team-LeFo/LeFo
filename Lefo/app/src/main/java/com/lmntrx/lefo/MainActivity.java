@@ -23,6 +23,9 @@ public class MainActivity extends Activity {
     public static String PARSE_CLIENT_KEY = "PPNey0aT3L0LAuj9LuEgBgtSpn4eEALQ5WMJzAM6";
     Location current_location;
 
+    //Activity
+    public final Activity mainActivity=this;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -47,17 +50,15 @@ public class MainActivity extends Activity {
                     })
                     .setIcon(android.R.drawable.ic_dialog_alert)
                     .show();
+        }else{
+            //GPS Enabled Check
+            final LocationManager manager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+            if (!manager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+                buildAlertMessageNoGps();
+            }else {
+                kickStartGPS();
+            }
         }
-
-        //GPS Enabled Check
-        final LocationManager manager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-        if (!manager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
-            buildAlertMessageNoGps();
-        }else {
-            kickStartGPS();
-        }
-
-
     }
 
     //InnerClass LocationListener
@@ -82,13 +83,14 @@ public class MainActivity extends Activity {
 
         @Override
         public void onProviderDisabled(String s) {
-            Toast.makeText(getApplicationContext(), "Location Fetch Disabled", Toast.LENGTH_SHORT).show(); //Message when GPS is turned off
+
         }
     }
 
 
     //LeadQR Intent
     public void lead(View v) {
+        kickStartGPS();
         Intent intent = new Intent(this, LeadQR.class);
         startActivity(intent);
     }
@@ -135,7 +137,16 @@ public class MainActivity extends Activity {
         //KickStarting GPS
         LocationManager managerKickStart = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
         LocationListener locationListener = new LeFo_LocationListener();                 //LeFo_LocationListener is defined below
+        Location location=managerKickStart.getLastKnownLocation(LocationManager.GPS_PROVIDER);
         managerKickStart.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, locationListener);
+        if (managerKickStart.isProviderEnabled(LocationManager.GPS_PROVIDER)){
+            for (int i=0;i<100;i++){
+                location=managerKickStart.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+                if (location!=null){
+                    break;
+                }
+            }
+        }
 
     }
 
