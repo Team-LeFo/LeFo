@@ -1,7 +1,9 @@
 package com.lmntrx.lefo;
 
+import android.app.AlertDialog;
 import android.app.Service;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.location.Location;
 import android.location.LocationListener;
@@ -201,7 +203,8 @@ public class FetchLocationService extends Service {
 
         @Override
         public void onProviderDisabled(String s) {
-            Toast.makeText(CON, "Location Fetch Disabled", Toast.LENGTH_SHORT).show(); //Message when GPS is turned off
+            Toast.makeText(CON, "Location was disabled. Please enable it to continue.", Toast.LENGTH_SHORT).show(); //Message when GPS is turned off
+
         }
     }
 

@@ -38,7 +38,7 @@ public class FollowCode extends Activity {
     public static String objectId = null;
 
     //Location
-    Location leaderLoc = new Location("");
+    public static Location leaderLoc = new Location("");
     Location followerLoc = new Location("");
 
     String code;
@@ -68,10 +68,10 @@ public class FollowCode extends Activity {
     public void connect(View v) {
 
         //Getting entered code
-        String qrCode = codeTXT.getText().toString().trim();
+        final String qrCode = codeTXT.getText().toString().trim();
         if (!qrCode.isEmpty()) {
             mProgressBar.setVisibility(View.VISIBLE);
-            int code = Integer.parseInt(qrCode);
+            final int code = Integer.parseInt(qrCode);
             ParseQuery<ParseObject> queryID = ParseQuery.getQuery(PARSE_CLASS);
             queryID.whereEqualTo(KEY_QRCODE, code);
             queryID.findInBackground(new FindCallback<ParseObject>() {
@@ -86,31 +86,12 @@ public class FollowCode extends Activity {
                                 // Retrieving objectId
                                 objectId = result.getObjectId();
                             }
-
-                            // Retrieving data from object
-                            if (objectId != null) {
-                                ParseQuery<ParseObject> query = ParseQuery.getQuery(PARSE_CLASS);
-                                query.getInBackground(objectId, new GetCallback<ParseObject>() {
-                                    public void done(ParseObject object, ParseException e) {
-                                        if (e == null) {
-                                            if (object != null) {
-                                                ParseGeoPoint loc = object.getParseGeoPoint(KEY_LOCATION);
-                                                double lat = loc.getLatitude();
-                                                double lon = loc.getLongitude();
-                                                leaderLoc.setLatitude(lat);
-                                                leaderLoc.setLongitude(lon);
-                                                Toast.makeText(followCodeCon, leaderLoc + "", Toast.LENGTH_LONG).show();
-                                            }
-                                            mProgressBar.setVisibility(View.INVISIBLE);
-                                        } else {
-                                            Toast.makeText(followCodeCon, "Verification Failed. Please ensure that the code entered is valid", Toast.LENGTH_LONG).show();
-                                            mProgressBar.setVisibility(View.INVISIBLE);
-                                        }
-                                    }
-                                });
-                            } else {
-                                mProgressBar.setVisibility(View.INVISIBLE);
-                            }
+                            Intent mapsIntent=new Intent(followCodeCon,MapsActivity.class);
+                            mapsIntent.putExtra("CODE",qrCode);
+                            mapsIntent.putExtra("OBJECT_ID",objectId);
+                            startActivity(mapsIntent);
+                            mProgressBar.setVisibility(View.INVISIBLE);
+                            followCodeActivity.finish();
                         }
                     } else {
                         //Incase of an unknown error

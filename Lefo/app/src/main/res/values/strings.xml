@@ -8,5 +8,6 @@
     <string name="title_activity_follow_qr">FollowQR</string>
     <string name="title_activity_follow_code">FollowCode</string>
     <string name="title_activity_navigation">Navigation</string>
+    <string name="title_activity_maps">Map</string>
 
 </resources>

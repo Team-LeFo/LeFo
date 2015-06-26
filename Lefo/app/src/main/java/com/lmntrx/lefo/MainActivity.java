@@ -2,6 +2,7 @@ package com.lmntrx.lefo;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -16,6 +17,8 @@ import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.parse.Parse;
 
 
@@ -30,6 +33,8 @@ public class MainActivity extends Activity {
     public final Activity mainActivity=this;
 
     boolean doubleBackToExitPressedOnce;
+
+
 
 
     @Override
@@ -163,6 +168,14 @@ public class MainActivity extends Activity {
     public void onResume() {
         super.onResume();
         kickStartGPS();
+        int statusCode= GooglePlayServicesUtil.isGooglePlayServicesAvailable(this);
+        if (statusCode!= ConnectionResult.SUCCESS){
+            if (GooglePlayServicesUtil.isUserRecoverableError(statusCode)){
+                Toast.makeText(this,statusCode+"",Toast.LENGTH_LONG).show();
+            }else{
+                Toast.makeText(this,statusCode+": Google play services not available",Toast.LENGTH_LONG).show();
+            }
+        }
     }
 
     @Override
