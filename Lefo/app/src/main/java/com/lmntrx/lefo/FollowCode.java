@@ -1,11 +1,14 @@
 package com.lmntrx.lefo;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -35,8 +38,8 @@ public class FollowCode extends Activity {
     public static String objectId = null;
 
     //Location
-    Location leaderLoc=new Location("");
-    Location followerLoc=new Location("");
+    Location leaderLoc = new Location("");
+    Location followerLoc = new Location("");
 
     String code;
     Context followCodeCon;
@@ -44,10 +47,16 @@ public class FollowCode extends Activity {
     Button startPursuit;
     ProgressBar mProgressBar;
 
+    Activity followCodeActivity=this;
+
+    boolean doubleBackToExitPressedOnce;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_follow_code);
+        MainActivity.mProgressBar.setVisibility(View.INVISIBLE);
         codeTXT = (EditText) findViewById(R.id.insertCode);
         followCodeCon = this.getApplicationContext();
         startPursuit = (Button) findViewById(R.id.connectBTN);
@@ -59,12 +68,12 @@ public class FollowCode extends Activity {
     public void connect(View v) {
 
         //Getting entered code
-        String qrCode=codeTXT.getText().toString().trim();
-        if (!qrCode.isEmpty()){
+        String qrCode = codeTXT.getText().toString().trim();
+        if (!qrCode.isEmpty()) {
             mProgressBar.setVisibility(View.VISIBLE);
             int code = Integer.parseInt(qrCode);
             ParseQuery<ParseObject> queryID = ParseQuery.getQuery(PARSE_CLASS);
-            queryID.whereEqualTo(KEY_QRCODE,code );
+            queryID.whereEqualTo(KEY_QRCODE, code);
             queryID.findInBackground(new FindCallback<ParseObject>() {
                 @Override
                 public void done(List<ParseObject> parseObjects, ParseException e) {
@@ -72,7 +81,7 @@ public class FollowCode extends Activity {
                         if (parseObjects.isEmpty()) {
                             Toast.makeText(followCodeCon, "Verification Failed. Please ensure that the code entered is valid", Toast.LENGTH_LONG).show();
                             mProgressBar.setVisibility(View.INVISIBLE);
-                        }else{
+                        } else {
                             for (ParseObject result : parseObjects) {
                                 // Retrieving objectId
                                 objectId = result.getObjectId();
@@ -84,13 +93,13 @@ public class FollowCode extends Activity {
                                 query.getInBackground(objectId, new GetCallback<ParseObject>() {
                                     public void done(ParseObject object, ParseException e) {
                                         if (e == null) {
-                                            if(object!=null){
-                                                ParseGeoPoint loc=object.getParseGeoPoint(KEY_LOCATION);
-                                                double lat=loc.getLatitude();
-                                                double lon=loc.getLongitude();
+                                            if (object != null) {
+                                                ParseGeoPoint loc = object.getParseGeoPoint(KEY_LOCATION);
+                                                double lat = loc.getLatitude();
+                                                double lon = loc.getLongitude();
                                                 leaderLoc.setLatitude(lat);
                                                 leaderLoc.setLongitude(lon);
-                                                Toast.makeText(followCodeCon,leaderLoc+"", Toast.LENGTH_LONG).show();
+                                                Toast.makeText(followCodeCon, leaderLoc + "", Toast.LENGTH_LONG).show();
                                             }
                                             mProgressBar.setVisibility(View.INVISIBLE);
                                         } else {
@@ -99,7 +108,7 @@ public class FollowCode extends Activity {
                                         }
                                     }
                                 });
-                            }else {
+                            } else {
                                 mProgressBar.setVisibility(View.INVISIBLE);
                             }
                         }
@@ -110,7 +119,7 @@ public class FollowCode extends Activity {
                     }
                 }
             });
-        }else {
+        } else {
             Toast.makeText(followCodeCon, "Enter shared code to proceed", Toast.LENGTH_LONG).show();
         }
 
@@ -152,4 +161,24 @@ public class FollowCode extends Activity {
             }
         }
     }
+
+    @Override
+    public void onBackPressed() {
+        if (doubleBackToExitPressedOnce) {
+            followCodeActivity.finish();
+            return;
+        }
+
+        this.doubleBackToExitPressedOnce = true;
+        Toast.makeText(this, "Please tap BACK again to go back", Toast.LENGTH_SHORT).show();
+
+        new Handler().postDelayed(new Runnable() {
+
+            @Override
+            public void run() {
+                doubleBackToExitPressedOnce = false;
+            }
+        }, 2000);
+    }
+
 }

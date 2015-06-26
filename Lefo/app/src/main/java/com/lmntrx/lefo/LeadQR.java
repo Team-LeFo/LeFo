@@ -5,43 +5,23 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.location.Location;
-import android.location.LocationListener;
-import android.location.LocationManager;
 import android.os.Bundle;
+import android.os.Handler;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.Toast;
 
-import com.parse.FindCallback;
-import com.parse.GetCallback;
-import com.parse.ParseException;
-import com.parse.ParseGeoPoint;
-import com.parse.ParseObject;
-import com.parse.ParseQuery;
-
-import java.util.List;
 import java.util.Random;
 
 
 public class LeadQR extends Activity {
 
     //Context
-    Context CON;
-
-    //Parse Class Name
-    public static final String PARSE_CLASS = "LeFo_DB";
-
-    //Parse Keys
-    public static final String KEY_QRCODE = "QR_CODE";
-    public static final String KEY_LOCATION = "LOCATION";
-
-    //Parse ObjectID
-    public static String objectId = null;
+    public static Context CON;
 
 
     //Code Generation
-    public int qrcode;
+    public static int qrcode;
 
     //URL for generating QRCode for generated random code
     //Use any of the following servers
@@ -55,16 +35,10 @@ public class LeadQR extends Activity {
     //ImageView to display QRCode
     public ImageView qr_Img;
 
-    //Location Variables
-    Location old_location = null;
-    Location current_location = null;
-    Location gps_location = null;
-    Location network_location = null;
-    public final long MIN_TIME = 5000; //5000ms=5s
-    public final float MIN_DISTANCE = 2;//2m
-
     //Activity
-    public final Activity leadQRActivity=this;
+    public final Activity leadQRActivity = this;
+
+    boolean doubleBackToExitPressedOnce;
 
 
     @Override
@@ -75,96 +49,13 @@ public class LeadQR extends Activity {
         CON = this.getApplicationContext();
         qrcode = randNum();
 
+        startMethod();
+
         //Async Task ImageLoadTask loads qr code from qrUrl to qr_Img
         new ImageLoadTask(qrUrl + qrcode + qrUrl2Size, qr_Img).execute();
 
-        //Fetch Location
-        LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+        MainActivity.mProgressBar.setVisibility(View.INVISIBLE);
 
-        //Initializing Location
-        gps_location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-        current_location = gps_location;
-
-        //LeFo_LocationListener is defined below
-        LocationListener locationListener = new LeFo_LocationListener();
-
-        //Checking if current location is set using GPS provider
-        if (current_location == null) {
-            //if unable to find gps location
-            //try again
-            if (locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)){
-                for (int i=0;i<1000;i++){
-                    gps_location=locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-                    current_location=gps_location;
-                    if (current_location!=null){
-                        break;
-                    }
-                }
-            }
-            if (current_location==null){
-                //Searching for network location
-                network_location = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
-                current_location = network_location;
-            }
-            if (current_location == null) {
-                //trying again
-                for (int i=0;i<200;i++){
-                    gps_location=locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-                    current_location=gps_location;
-                    if (current_location!=null){
-                        break;
-                    }
-                }
-                if (current_location==null){
-                    //trying again
-                    for (int i=0;i<200;i++){
-                        network_location=locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
-                        current_location=network_location;
-                        if (current_location!=null){
-                            break;
-                        }
-                    }
-                    //If due to some cause location is not found
-                    if (current_location==null){
-                        restartActivityDialog();
-                        return;
-                    }
-                }
-            } else {
-                //Syncing with Parse database for the first time
-                syncDB(qrcode, current_location);
-            }
-        } else {
-            //Syncing with Parse database for the first time
-            syncDB(qrcode, current_location);
-        }
-
-
-        //Choosing appropriate location listener
-        if (gps_location != null) {
-            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, MIN_TIME, MIN_DISTANCE, locationListener);
-        } else {
-            locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, MIN_TIME, MIN_DISTANCE, locationListener);
-        }
-
-
-    }
-
-    //Function for restarting LeadQR
-    private void restartActivityDialog() {
-        final AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setMessage("Due to some internal error location fetch was interrupted. Please restart activity")
-                .setTitle("Error")
-                .setCancelable(false)
-                .setPositiveButton("Restart", new DialogInterface.OnClickListener() {
-                    public void onClick(@SuppressWarnings("unused") final DialogInterface dialog, @SuppressWarnings("unused") final int id) {
-                        Intent intent = new Intent(CON, LeadQR.class);
-                        startActivity(intent);
-                        leadQRActivity.finish();   //Closing current instance of LeadQR
-                    }
-                });
-        final AlertDialog alert = builder.create();
-        alert.show();
     }
 
     //Random Code Generator
@@ -172,83 +63,6 @@ public class LeadQR extends Activity {
         Random random = new Random();
         int min = 999, max = 99999999;
         return random.nextInt((max - min + 1) + min);
-    }
-
-    //Function for syncing generated data with ParseDB
-    public void syncDB(int code, Location location) {
-        ParseObject parseObject = new ParseObject(PARSE_CLASS);
-        ParseGeoPoint geoPoint = new ParseGeoPoint(location.getLatitude(), location.getLongitude());
-        parseObject.put(KEY_QRCODE, code);
-        parseObject.put(KEY_LOCATION, geoPoint);
-        parseObject.saveInBackground();
-    }
-
-    //Function for updating user Location
-    public void updateParseDB(int code) {
-        //Object ID has to be fetched first
-        //then using it the object is updated with new location
-        ParseQuery<ParseObject> queryID = ParseQuery.getQuery(PARSE_CLASS);
-        queryID.whereEqualTo(KEY_QRCODE, code);
-        queryID.findInBackground(new FindCallback<ParseObject>() {
-            @Override
-            public void done(List<ParseObject> parseObjects, ParseException e) {
-                if (e == null) {
-                    for (ParseObject result : parseObjects) {
-                        // Retrieving objectId
-                        objectId = result.getObjectId();
-                    }
-                    // Retrieving data from object
-                    if (objectId != null) {
-                        ParseQuery<ParseObject> query = ParseQuery.getQuery(PARSE_CLASS);
-                        query.getInBackground(objectId, new GetCallback<ParseObject>() {
-                            public void done(ParseObject parseUpdateObject, ParseException e) {
-                                if (e == null) {
-                                    ParseGeoPoint newGeoPoint = new ParseGeoPoint(current_location.getLatitude(), current_location.getLongitude());
-                                    parseUpdateObject.put(KEY_LOCATION, newGeoPoint);
-                                    parseUpdateObject.saveInBackground();
-                                } else {
-                                    Toast.makeText(CON, e.getMessage(), Toast.LENGTH_LONG).show();
-                                }
-                            }
-                        });
-                    }
-                } else {
-                    //Incase of an unknown error
-                    Toast.makeText(CON, e.getMessage(), Toast.LENGTH_LONG).show();
-                }
-            }
-        });
-    }
-
-    //InnerClass LocationListener
-    class LeFo_LocationListener implements LocationListener {
-        @Override
-        public void onLocationChanged(Location location) {
-            if (location != null) {
-                current_location = location;
-
-                //Registering new location in database
-                if (old_location != current_location) {
-                    updateParseDB(qrcode);
-                    old_location = current_location;
-                }
-            }
-        }
-
-        @Override
-        public void onStatusChanged(String s, int i, Bundle bundle) {
-
-        }
-
-        @Override
-        public void onProviderEnabled(String s) {
-
-        }
-
-        @Override
-        public void onProviderDisabled(String s) {
-            Toast.makeText(getApplicationContext(), "Location Fetch Disabled", Toast.LENGTH_SHORT).show(); //Message when GPS is turned off
-        }
     }
 
     //Share Dialog Builder
@@ -276,4 +90,34 @@ public class LeadQR extends Activity {
         alert.show();
     }
 
+    public void startMethod() {
+        Intent serviceIntent = new Intent(this, FetchLocationService.class);
+        serviceIntent.putExtra("CODE", qrcode);
+        startService(serviceIntent);
+    }
+
+    public void stopMethod() {
+        Intent serviceIntent = new Intent(this, FetchLocationService.class);
+        stopService(serviceIntent);
+    }
+
+    @Override
+    public void onBackPressed() {
+
+        if (doubleBackToExitPressedOnce) {
+            leadQRActivity.finish();
+            return;
+        }
+
+        this.doubleBackToExitPressedOnce = true;
+        Toast.makeText(this, "Please tap BACK again to go back", Toast.LENGTH_SHORT).show();
+
+        new Handler().postDelayed(new Runnable() {
+
+            @Override
+            public void run() {
+                doubleBackToExitPressedOnce = false;
+            }
+        }, 2000);
+    }
 }

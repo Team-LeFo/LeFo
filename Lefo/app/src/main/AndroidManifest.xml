@@ -56,6 +56,9 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.lmntrx.lefo.MainActivity" />
         </activity>
+        <service
+            android:name=".FetchLocationService"
+            android:exported="false" />
     </application>
 
 </manifest>

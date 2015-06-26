@@ -11,7 +11,9 @@ import android.location.LocationManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
+import android.os.Handler;
 import android.view.View;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.parse.Parse;
@@ -22,15 +24,21 @@ public class MainActivity extends Activity {
     public static String PARSE_APP_KEY = "U4lYViqyMsMmvicbKzvKWLV4mkOJN6VfPbtfvHmp";
     public static String PARSE_CLIENT_KEY = "PPNey0aT3L0LAuj9LuEgBgtSpn4eEALQ5WMJzAM6";
     Location current_location;
+    public static ProgressBar mProgressBar;
 
     //Activity
     public final Activity mainActivity=this;
+
+    boolean doubleBackToExitPressedOnce;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         context = this;
+        mProgressBar=(ProgressBar)findViewById(R.id.progressBar);
+        mProgressBar.setVisibility(View.INVISIBLE);
 
 
         //Initializing Parse BackEnd Support
@@ -90,6 +98,7 @@ public class MainActivity extends Activity {
 
     //LeadQR Intent
     public void lead(View v) {
+        mProgressBar.setVisibility(View.VISIBLE);
         kickStartGPS();
         Intent intent = new Intent(this, LeadQR.class);
         startActivity(intent);
@@ -154,6 +163,25 @@ public class MainActivity extends Activity {
     public void onResume() {
         super.onResume();
         kickStartGPS();
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (doubleBackToExitPressedOnce) {
+            System.exit(0);
+            return;
+        }
+
+        this.doubleBackToExitPressedOnce = true;
+        Toast.makeText(this, "Please tap BACK again to exit", Toast.LENGTH_SHORT).show();
+
+        new Handler().postDelayed(new Runnable() {
+
+            @Override
+            public void run() {
+                doubleBackToExitPressedOnce = false;
+            }
+        }, 2000);
     }
 
 
