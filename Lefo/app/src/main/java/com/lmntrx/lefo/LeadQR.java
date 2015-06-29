@@ -49,11 +49,13 @@ public class LeadQR extends Activity {
         CON = this.getApplicationContext();
         qrcode = randNum();
 
-        startMethod();
+        //Starting location fetch
+        startLocationService();
 
         //Async Task ImageLoadTask loads qr code from qrUrl to qr_Img
         new ImageLoadTask(qrUrl + qrcode + qrUrl2Size, qr_Img).execute();
 
+        //Dealing with ProgressBar
         MainActivity.mProgressBar.setVisibility(View.INVISIBLE);
 
     }
@@ -90,19 +92,27 @@ public class LeadQR extends Activity {
         alert.show();
     }
 
-    public void startMethod() {
-        Intent serviceIntent = new Intent(this, FetchLocationService.class);
-        serviceIntent.putExtra("CODE", qrcode);
-        startService(serviceIntent);
-    }
+    //Starts Location Service
+    public void startLocationService() {
 
-    public void stopMethod() {
-        Intent serviceIntent = new Intent(this, FetchLocationService.class);
-        stopService(serviceIntent);
+        //Defining new thread for the service so it doesn't mess up with the main Thread
+        Thread bgService=new Thread(){
+            public void run(){
+                try{
+                    Intent serviceIntent = new Intent(CON, FetchLocationService.class);
+                    serviceIntent.putExtra("CODE", qrcode);
+                    startService(serviceIntent);
+                }catch (Exception e){
+                    e.printStackTrace();
+                    Toast.makeText(CON,e.getMessage(),Toast.LENGTH_LONG).show();
+                }
+            }
+        };
+        bgService.run();
     }
 
     @Override
-    public void onBackPressed() {
+    public void onBackPressed() { //Overriding system back
 
         if (doubleBackToExitPressedOnce) {
             leadQRActivity.finish();

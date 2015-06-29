@@ -1,9 +1,7 @@
 package com.lmntrx.lefo;
 
-import android.app.AlertDialog;
 import android.app.Service;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.location.Location;
 import android.location.LocationListener;
@@ -51,11 +49,13 @@ public class FetchLocationService extends Service {
     //LeFo_LocationListener is defined below
     LocationListener locationListener;
 
+    //Context
     Context CON;
 
-
+    //variable for holding Code
     public int qrcode;
 
+    //Variable for checking syncDb() status
     boolean syncStatus = false;
 
 
@@ -63,7 +63,9 @@ public class FetchLocationService extends Service {
     public void onCreate() {
         super.onCreate();
 
+        //Initializing Context Variable
         CON = this;
+
     }
 
     @Override
@@ -97,10 +99,12 @@ public class FetchLocationService extends Service {
 
     @Override
     public IBinder onBind(Intent intent) {
+
         return null;
+
     }
 
-
+    //Method for finding and saving location
     public boolean getLocation() {
 
         //Initializing Location
@@ -156,10 +160,19 @@ public class FetchLocationService extends Service {
             return true;
         }
 
-
-        if (!confirmSync()) {
-            //confirmSync();
-        }
+        Thread confirmer=new Thread(){      //Confirmer LOL :D
+            public void run(){
+                try {
+                    Thread.sleep(2000);
+                    if (!confirmSync()) {
+                        //Empty Cause confirmSync() is already done
+                    }
+                }catch (Exception e){
+                    Toast.makeText(CON,e.getMessage(),Toast.LENGTH_LONG).show();
+                }
+            }
+        };
+        confirmer.run();
 
         return current_location != null;
     }
@@ -185,7 +198,6 @@ public class FetchLocationService extends Service {
                 //Registering new location in database
                 if (old_location != current_location) {
                     updateParseDB(qrcode);
-                    //Toast.makeText(CON, location + "", Toast.LENGTH_LONG).show();
                     old_location = current_location;
                 }
             }

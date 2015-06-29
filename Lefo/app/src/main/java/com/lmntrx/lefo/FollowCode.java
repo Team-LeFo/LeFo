@@ -9,6 +9,7 @@ import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -104,16 +105,14 @@ public class FollowCode extends Activity {
             Toast.makeText(followCodeCon, "Enter shared code to proceed", Toast.LENGTH_LONG).show();
         }
 
-        //Toast.makeText(followCodeCon,objectId,Toast.LENGTH_LONG).show();
-
     }
 
-    //Intent-To Be changed later
+    //Intent-To Be changed later with native qrCode reader
     public void qrCode(View v) {
         try {
 
             Intent intent = new Intent("com.google.zxing.client.android.SCAN");
-            intent.putExtra("SCAN_MODE", "QR_CODE_MODE"); // "PRODUCT_MODE for bar codes
+            intent.putExtra("SCAN_MODE", "QR_CODE_MODE");
 
             startActivityForResult(intent, 0);
 
@@ -130,15 +129,20 @@ public class FollowCode extends Activity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == 0) {
-
             if (resultCode == RESULT_OK) {
-                code = data.getStringExtra("SCAN_RESULT");
-                codeTXT.setText(code);
-                startPursuit.callOnClick();
-                //Toast.makeText(followCodeCon, code, Toast.LENGTH_LONG).show();
+                try {
+                    code = data.getStringExtra("SCAN_RESULT");
+                    int codeInt=Integer.parseInt(code);
+                    codeTXT.setText(codeInt+"");
+                    startPursuit.callOnClick();
+                }catch (NumberFormatException e){
+                    //If any other QRCode is scanned
+                    Log.i("", code + "is not a number");
+                    Toast.makeText(followCodeCon,"Incorrect Format. Scan only LeFo QRCodes!", Toast.LENGTH_LONG).show();
+                }
             }
             if (resultCode == RESULT_CANCELED) {
-                //handle cancel
+                Toast.makeText(followCodeCon,"Scan Canceled", Toast.LENGTH_LONG).show();
             }
         }
     }

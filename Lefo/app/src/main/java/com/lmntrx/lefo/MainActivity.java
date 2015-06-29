@@ -34,6 +34,8 @@ public class MainActivity extends Activity {
 
     boolean doubleBackToExitPressedOnce;
 
+    public static Activity getMainActivity;
+
 
 
 
@@ -42,6 +44,7 @@ public class MainActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         context = this;
+        getMainActivity=this;
         mProgressBar=(ProgressBar)findViewById(R.id.progressBar);
         mProgressBar.setVisibility(View.INVISIBLE);
 
