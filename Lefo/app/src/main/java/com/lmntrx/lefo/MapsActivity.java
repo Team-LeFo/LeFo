@@ -14,6 +14,7 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
@@ -92,12 +93,12 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                                 }
                             });
                         }
-                        Log.d("TIMER", "Timer set off");
+                        Log.d("TIMER", "Timer Running");
                     }
                 });
             }
         };
-        t.schedule(feedLocation, 500, 1000); //updates every 1s
+        t.schedule(feedLocation, 500, 500); //updates every 0.5s
 
     }
 
@@ -105,30 +106,29 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         if (leaderLoc != null) {
             leaderLocation = new LatLng(leaderLoc.getLatitude(), leaderLoc.getLongitude());
             setMarker(map,leaderLocation);
-            /*
-
-            map.moveCamera(CameraUpdateFactory.newLatLngZoom(leaderLocation, 18.5f));
-            map.animateCamera(CameraUpdateFactory.newLatLngZoom(leaderLocation, 18.5f));*/
         } else {
             Toast.makeText(CON, "Failed to Locate", Toast.LENGTH_LONG).show();
             //Default :D
             LatLng kanjoor = new LatLng(10.141792312058117, 76.43611420148119);
             map.addMarker(new MarkerOptions().position(kanjoor).title("Marker in Random Location"));
+            map.setBuildingsEnabled(true);
             map.moveCamera(CameraUpdateFactory.newLatLngZoom(kanjoor, 16.5f));
             map.animateCamera(CameraUpdateFactory.newLatLngZoom(kanjoor, 16.5f));
         }
     }
 
     private void setMarker(GoogleMap map, LatLng leaderLocation) {
-        leaderMarker.setPosition(leaderLocation);
+        /*leaderMarker.setPosition(leaderLocation);
+        leaderMarker.setFlat(true);*/
+        map.addMarker(new MarkerOptions().position(leaderLocation).flat(true));
         map.moveCamera(CameraUpdateFactory.newLatLngZoom(leaderLocation, 18.5f));
         map.animateCamera(CameraUpdateFactory.newLatLngZoom(leaderLocation, 18.5f));
     }
 
     @Override
     public void onMapReady(GoogleMap map) {
-        leaderMarkerOptions = new MarkerOptions().flat(true).title("Leader's Location").position(leaderLocation);
-        leaderMarker = map.addMarker(leaderMarkerOptions);
+        //leaderMarkerOptions = new MarkerOptions().flat(true).title("Leader's Location").position(leaderLocation);
+        //leaderMarker = map.addMarker(leaderMarkerOptions);
         getLeaderLoc(map);
     }
 
