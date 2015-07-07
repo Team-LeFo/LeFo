@@ -113,12 +113,13 @@ public class FollowCode extends Activity {
 
             Intent intent = new Intent("com.google.zxing.client.android.SCAN");
             intent.putExtra("SCAN_MODE", "QR_CODE_MODE");
+            intent.setPackage("com.google.android.apps.unveil");
 
-            startActivityForResult(intent, 0);
+            startActivityForResult(intent,0);
 
         } catch (Exception e) {
 
-            Uri marketUri = Uri.parse("market://details?id=com.google.zxing.client.android");
+            Uri marketUri = Uri.parse("market://details?id=com.google.android.apps.unveil");
             Intent marketIntent = new Intent(Intent.ACTION_VIEW, marketUri);
             startActivity(marketIntent);
 

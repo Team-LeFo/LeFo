@@ -39,6 +39,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     //Parse ObjectID
     public static String objectId = null;
     ParseGeoPoint leaderLoc;
+    ParseGeoPoint oldleaderLoc;
     String code;
     String objectID;
 
@@ -82,11 +83,16 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                                 public void done(ParseObject object, ParseException e) {
                                     if (e == null) {
                                         if (object != null) {
-                                            leaderLoc = object.getParseGeoPoint(KEY_LOCATION);
-                                            showLeaderLoc(map);
+                                            //if(leaderLoc!=oldleaderLoc){
+                                                leaderLoc = object.getParseGeoPoint(KEY_LOCATION);
+                                                showLeaderLoc(map);
+                                                oldleaderLoc=leaderLoc;
+                                            //}else {
+                                                //Toast.makeText(CON,"Here",Toast.LENGTH_LONG).show();
+                                            //}
                                         }
                                     } else {
-                                        Toast.makeText(CON, "Object not found", Toast.LENGTH_LONG).show();
+                                        Toast.makeText(CON, "Location not found", Toast.LENGTH_LONG).show();
                                         e.printStackTrace();
                                         return;
                                     }
@@ -118,9 +124,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     }
 
     private void setMarker(GoogleMap map, LatLng leaderLocation) {
-        /*leaderMarker.setPosition(leaderLocation);
+       /*leaderMarker.setPosition(leaderLocation);
         leaderMarker.setFlat(true);*/
         map.addMarker(new MarkerOptions().position(leaderLocation).flat(true));
+        map.setTrafficEnabled(true);
         map.moveCamera(CameraUpdateFactory.newLatLngZoom(leaderLocation, 18.5f));
         map.animateCamera(CameraUpdateFactory.newLatLngZoom(leaderLocation, 18.5f));
     }
