@@ -55,6 +55,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     Marker leaderMarker;
     LatLng leaderLocation=new LatLng(10.141792312058117, 76.43611420148119);  //ignored
 
+    int count;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -66,6 +68,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         code = getIntent().getStringExtra("CODE");
         objectId = getIntent().getStringExtra("OBJECT_ID");
+
+        count=0;
     }
 
 
@@ -127,9 +131,12 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
        /*leaderMarker.setPosition(leaderLocation);
         leaderMarker.setFlat(true);*/
         map.addMarker(new MarkerOptions().position(leaderLocation).flat(true));
-        map.setTrafficEnabled(true);
-        map.moveCamera(CameraUpdateFactory.newLatLngZoom(leaderLocation, 18.5f));
-        map.animateCamera(CameraUpdateFactory.newLatLngZoom(leaderLocation, 18.5f));
+        if (count==0){
+            map.setTrafficEnabled(true);
+            map.moveCamera(CameraUpdateFactory.newLatLngZoom(leaderLocation, 18.5f));
+            map.animateCamera(CameraUpdateFactory.newLatLngZoom(leaderLocation, 18.5f));
+            count=1;
+        }
     }
 
     @Override
