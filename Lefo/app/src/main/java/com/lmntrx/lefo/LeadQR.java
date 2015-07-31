@@ -94,21 +94,13 @@ public class LeadQR extends Activity {
 
     //Starts Location Service
     public void startLocationService() {
+        /*Service is called on the same thread. Even if I enclose the following code in a new thread
+        the service will only run on the main thread. I have put code into different threads in FetchLocationService.java*/
 
-        //Defining new thread for the service so it doesn't mess up with the main Thread
-        Thread bgService=new Thread(){
-            public void run(){
-                try{
-                    Intent serviceIntent = new Intent(CON, FetchLocationService.class);
-                    serviceIntent.putExtra("CODE", qrcode);
-                    startService(serviceIntent);
-                }catch (Exception e){
-                    e.printStackTrace();
-                    Toast.makeText(CON,e.getMessage(),Toast.LENGTH_LONG).show();
-                }
-            }
-        };
-        bgService.run();
+        Intent serviceIntent = new Intent(CON, FetchLocationService.class);
+        serviceIntent.putExtra("CODE", qrcode);
+        startService(serviceIntent);
+
     }
 
     @Override

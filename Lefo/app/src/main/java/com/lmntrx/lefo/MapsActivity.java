@@ -1,5 +1,11 @@
 package com.lmntrx.lefo;
 
+ /*
+    -----------------------------------------------------------------------------------------
+        I am currently working on this activity.
+        I'll update comments sections once the activity is complete
+    -----------------------------------------------------------------------------------------
+ */
 
 import android.app.Activity;
 import android.content.Context;
@@ -14,7 +20,6 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
-import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
@@ -53,7 +58,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     MarkerOptions leaderMarkerOptions;
     GoogleMap googleMap;
     Marker leaderMarker;
-    LatLng leaderLocation=new LatLng(10.141792312058117, 76.43611420148119);  //ignored
+    LatLng leaderLocation = new LatLng(10.141792312058117, 76.43611420148119);  //ignored
 
     int count;
 
@@ -69,7 +74,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         code = getIntent().getStringExtra("CODE");
         objectId = getIntent().getStringExtra("OBJECT_ID");
 
-        count=0;
+        count = 0;
     }
 
 
@@ -88,11 +93,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                                     if (e == null) {
                                         if (object != null) {
                                             //if(leaderLoc!=oldleaderLoc){
-                                                leaderLoc = object.getParseGeoPoint(KEY_LOCATION);
-                                                showLeaderLoc(map);
-                                                oldleaderLoc=leaderLoc;
+                                            leaderLoc = object.getParseGeoPoint(KEY_LOCATION);
+                                            showLeaderLoc(map);
+                                            oldleaderLoc = leaderLoc;
                                             //}else {
-                                                //Toast.makeText(CON,"Here",Toast.LENGTH_LONG).show();
+                                            //Toast.makeText(CON,"Here",Toast.LENGTH_LONG).show();
                                             //}
                                         }
                                     } else {
@@ -115,7 +120,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private void showLeaderLoc(GoogleMap map) {
         if (leaderLoc != null) {
             leaderLocation = new LatLng(leaderLoc.getLatitude(), leaderLoc.getLongitude());
-            setMarker(map,leaderLocation);
+            setMarker(map, leaderLocation);
         } else {
             Toast.makeText(CON, "Failed to Locate", Toast.LENGTH_LONG).show();
             //Default :D
@@ -131,11 +136,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
        /*leaderMarker.setPosition(leaderLocation);
         leaderMarker.setFlat(true);*/
         map.addMarker(new MarkerOptions().position(leaderLocation).flat(true));
-        if (count==0){
+        if (count == 0) {
             map.setTrafficEnabled(true);
             map.moveCamera(CameraUpdateFactory.newLatLngZoom(leaderLocation, 18.5f));
             map.animateCamera(CameraUpdateFactory.newLatLngZoom(leaderLocation, 18.5f));
-            count=1;
+            count = 1;
         }
     }
 

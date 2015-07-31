@@ -2,7 +2,6 @@ package com.lmntrx.lefo;
 
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -23,35 +22,42 @@ import com.parse.Parse;
 
 
 public class MainActivity extends Activity {
+
+    //Context Variable
     Context context;
+
+    //Parse Authentication Keys
     public static String PARSE_APP_KEY = "U4lYViqyMsMmvicbKzvKWLV4mkOJN6VfPbtfvHmp";
     public static String PARSE_CLIENT_KEY = "PPNey0aT3L0LAuj9LuEgBgtSpn4eEALQ5WMJzAM6";
+
+    //Location Variable
     Location current_location;
+
+    //Progressbar
     public static ProgressBar mProgressBar;
 
-    //Activity
-    public final Activity mainActivity=this;
-
+    //Variable that checks is back button was pressed once
     boolean doubleBackToExitPressedOnce;
 
+    //MainActivity Instance
     public static Activity getMainActivity;
-
-
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        //Initializing Variables
         context = this;
         getMainActivity=this;
         mProgressBar=(ProgressBar)findViewById(R.id.progressBar);
-        mProgressBar.setVisibility(View.INVISIBLE);
 
+        //Initially setting progressbar to invisible
+        mProgressBar.setVisibility(View.INVISIBLE);
 
         //Initializing Parse BackEnd Support
         Parse.initialize(this, PARSE_APP_KEY, PARSE_CLIENT_KEY);
-
 
         //Internet Connectivity Status Check
         if (!isNetworkAvailable()) {

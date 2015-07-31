@@ -80,14 +80,41 @@ public class FetchLocationService extends Service {
             return super.onStartCommand(intent, flags, startId);
         }
         if (!(qrcode + "").isEmpty()) {
-            while (!getLocation()) {
-                Log.d("Status", "Getting Location");
-            }
+
+            //--------------------------------------------------
+            Thread thread = new Thread() {
+                public void run() {
+                    try {
+                        int i = 0;
+                        while (!getLocation() && i < 2) {
+                            Log.d("Status", "Getting Location");
+                            i++;
+                        }
+                        if (i >= 2) {
+                            Toast.makeText(CON, "Sorry, Something is not right. Retry", Toast.LENGTH_LONG);
+                            restartApp();
+                        }
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        Toast.makeText(CON, e.getMessage(), Toast.LENGTH_LONG).show();
+                    }
+                }
+            };
+            thread.run();
+            //----------------------------------------------------
         }
+
         //Choosing appropriate location listener
         locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, MIN_TIME, MIN_DISTANCE, locationListener);
 
         return super.onStartCommand(intent, flags, startId);
+    }
+
+    private void restartApp() {
+        Intent i = getBaseContext().getPackageManager().getLaunchIntentForPackage(getBaseContext().getPackageName());
+        i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        startActivity(i);
+
     }
 
     @Override
@@ -106,7 +133,6 @@ public class FetchLocationService extends Service {
 
     //Method for finding and saving location
     public boolean getLocation() {
-
         //Initializing Location
         gps_location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
         current_location = gps_location;
@@ -117,7 +143,7 @@ public class FetchLocationService extends Service {
             //if unable to find gps location
             //try again
             if (locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
-                for (int i = 0; i < 1000; i++) {
+                for (int i = 0; i < 500; i++) {
                     gps_location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
                     current_location = gps_location;
                     if (current_location != null) {
@@ -132,7 +158,7 @@ public class FetchLocationService extends Service {
             }
             if (current_location == null) {
                 //trying again
-                for (int i = 0; i < 2000; i++) {
+                for (int i = 0; i < 500; i++) {
                     gps_location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
                     current_location = gps_location;
                     if (current_location != null) {
@@ -141,7 +167,7 @@ public class FetchLocationService extends Service {
                 }
                 if (current_location == null) {
                     //trying again
-                    for (int i = 0; i < 2000; i++) {
+                    for (int i = 0; i < 500; i++) {
                         network_location = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
                         current_location = network_location;
                         if (current_location != null) {
@@ -160,15 +186,15 @@ public class FetchLocationService extends Service {
             return true;
         }
 
-        Thread confirmer=new Thread(){      //Confirmer LOL :D
-            public void run(){
+        Thread confirmer = new Thread() {      //Confirmer LOL :D
+            public void run() {
                 try {
                     Thread.sleep(2000);
                     if (!confirmSync()) {
                         //Empty Cause confirmSync() is already done
                     }
-                }catch (Exception e){
-                    Toast.makeText(CON,e.getMessage(),Toast.LENGTH_LONG).show();
+                } catch (Exception e) {
+                    Toast.makeText(CON, e.getMessage(), Toast.LENGTH_LONG).show();
                 }
             }
         };

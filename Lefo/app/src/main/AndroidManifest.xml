@@ -50,14 +50,6 @@
         <activity
             android:name=".FollowCode"
             android:label="@string/title_activity_follow_code" />
-        <activity
-            android:name=".Navigation"
-            android:label="@string/title_activity_navigation"
-            android:parentActivityName=".MainActivity" >
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.lmntrx.lefo.MainActivity" />
-        </activity>
 
         <service
             android:name=".FetchLocationService"
