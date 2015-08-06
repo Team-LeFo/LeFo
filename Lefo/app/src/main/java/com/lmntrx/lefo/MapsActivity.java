@@ -20,8 +20,6 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
-import com.google.android.gms.maps.model.BitmapDescriptorFactory;
-import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
@@ -121,6 +119,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     private void showLeaderLoc(GoogleMap map) {
         if (leaderLoc != null) {
+            //Toast.makeText(CON, "Showing LeaderLoc", Toast.LENGTH_LONG).show();
             leaderLocation = new LatLng(leaderLoc.getLatitude(), leaderLoc.getLongitude());
             setMarker(map, leaderLocation);
         } else {
@@ -135,13 +134,13 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     }
 
     private void setMarker(GoogleMap map, LatLng leaderLocation) {
-       /*leaderMarker.setPosition(leaderLocation);
-        leaderMarker.setFlat(true);*/
+        //leaderMarker.setPosition(leaderLocation);
+        //leaderMarker.setFlat(true);
         map.addMarker(new MarkerOptions().position(leaderLocation).flat(true));
         if (count == 0) {
             map.setTrafficEnabled(true);
-            map.moveCamera(CameraUpdateFactory.newLatLngZoom(leaderLocation, 18.5f));
-            map.animateCamera(CameraUpdateFactory.newLatLngZoom(leaderLocation, 18.5f));
+            map.moveCamera(CameraUpdateFactory.newLatLngZoom(leaderLocation, 16.5f));
+            map.animateCamera(CameraUpdateFactory.newLatLngZoom(leaderLocation, 16.5f));
             count = 1;
         }
     }
@@ -150,28 +149,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     public void onMapReady(GoogleMap map) {
         //leaderMarkerOptions = new MarkerOptions().flat(true).title("Leader's Location").position(leaderLocation);
         //leaderMarker = map.addMarker(leaderMarkerOptions);
-        //getLeaderLoc(map);
-        LatLng mapCenter = new LatLng(41.889, -87.622);
-
-        map.moveCamera(CameraUpdateFactory.newLatLngZoom(mapCenter, 13));
-
-        // Flat markers will rotate when the map is rotated,
-        // and change perspective when the map is tilted.
-        map.addMarker(new MarkerOptions()
-                .icon(BitmapDescriptorFactory.fromResource(R.drawable.leader_marker))
-                .position(mapCenter)
-                .flat(true)
-                .rotation(245));
-
-        CameraPosition cameraPosition = CameraPosition.builder()
-                .target(mapCenter)
-                .zoom(13)
-                .bearing(90)
-                .build();
-
-        // Animate the change in camera view over 2 seconds
-        map.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition),
-                2000, null);
+        getLeaderLoc(map);
     }
 
     public void reset() {
@@ -200,10 +178,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     public void onBackPressed() {
         if (doubleBackToExitPressedOnce) {
             //On Back
-            MainActivity.getMainActivity.finish();
+            /*MainActivity.getMainActivity.finish();
             Intent intent = new Intent(CON, MainActivity.class);
             startActivity(intent);
-            mapsActivity.finish();
+            mapsActivity.finish();*/
+            System.exit(0);
             return;
         }
 
