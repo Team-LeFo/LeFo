@@ -19,6 +19,7 @@ import android.widget.Toast;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.parse.Parse;
+import com.parse.ParseAnalytics;
 
 
 public class MainActivity extends Activity {
@@ -58,6 +59,7 @@ public class MainActivity extends Activity {
 
         //Initializing Parse BackEnd Support
         Parse.initialize(this, PARSE_APP_KEY, PARSE_CLIENT_KEY);
+        ParseAnalytics.trackAppOpenedInBackground(getIntent());
 
         //Internet Connectivity Status Check
         if (!isNetworkAvailable()) {

@@ -4,10 +4,14 @@
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
-    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="com.google.android.providers.gsf.permission.READ_GSERVICES" />
+    <!--
+ The ACCESS_COARSE/FINE_LOCATION permissions are not required to use
+         Google Maps Android API v2, but are recommended.
+    -->
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
 
     <application
         android:allowBackup="true"
@@ -32,12 +36,12 @@
                 android:value="com.lmntrx.lefo.MainActivity" />
         </activity>
         <activity
+            android:name=".FollowCode"
+            android:label="@string/title_activity_follow_code" >
+        </activity>
+        <activity
             android:name=".FollowerStatus"
-            android:label="@string/title_activity_follower_status"
-            android:parentActivityName=".MainActivity" >
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.lmntrx.lefo.MainActivity" />
+            android:label="@string/title_activity_follower_status" >
         </activity>
         <activity
             android:name=".FollowQR"
@@ -47,13 +51,6 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.lmntrx.lefo.MainActivity" />
         </activity>
-        <activity
-            android:name=".FollowCode"
-            android:label="@string/title_activity_follow_code" />
-
-        <service
-            android:name=".FetchLocationService"
-            android:exported="false" />
 
         <meta-data
             android:name="com.google.android.gms.version"
@@ -69,6 +66,10 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.lmntrx.lefo.FollowCode" />
         </activity>
+
+        <service
+            android:name=".FetchLocationService"
+            android:exported="false" />
     </application>
 
 </manifest>

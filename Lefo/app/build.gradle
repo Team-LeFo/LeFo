@@ -6,7 +6,7 @@ android {
 
     defaultConfig {
         applicationId "com.lmntrx.lefo"
-        minSdkVersion 16
+        minSdkVersion 15
         targetSdkVersion 22
         versionCode 1
         versionName "1.0"
@@ -21,9 +21,9 @@ android {
 
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
-    compile files('libs/Parse-1.9.2.jar')
-    compile fileTree(dir: 'libs', include: 'Parse-1.9.2.jar')
-    compile 'com.android.support:appcompat-v7:22.0.0'
-    compile 'com.parse.bolts:bolts-android:1.2.0'
+    compile 'com.android.support:appcompat-v7:22.1.1'
     compile 'com.google.android.gms:play-services:7.5.0'
+    compile files('libs/Parse-1.9.4/bolts-android-1.2.0.jar')
+    compile files('libs/Parse-1.9.4/Parse-1.9.4.jar')
+    compile files('libs/Parse-1.9.4/ParseCrashReporting-1.9.4.jar')
 }
