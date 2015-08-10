@@ -143,7 +143,7 @@ public class FetchLocationService extends Service {
             //if unable to find gps location
             //try again
             if (locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
-                for (int i = 0; i < 500; i++) {
+                for (int i = 0; i < 100; i++) {
                     gps_location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
                     current_location = gps_location;
                     if (current_location != null) {
@@ -158,7 +158,7 @@ public class FetchLocationService extends Service {
             }
             if (current_location == null) {
                 //trying again
-                for (int i = 0; i < 500; i++) {
+                for (int i = 0; i < 100; i++) {
                     gps_location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
                     current_location = gps_location;
                     if (current_location != null) {
@@ -167,7 +167,7 @@ public class FetchLocationService extends Service {
                 }
                 if (current_location == null) {
                     //trying again
-                    for (int i = 0; i < 500; i++) {
+                    for (int i = 0; i < 100; i++) {
                         network_location = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
                         current_location = network_location;
                         if (current_location != null) {

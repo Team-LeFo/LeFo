@@ -10,6 +10,9 @@ package com.lmntrx.lefo;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.FragmentActivity;
@@ -59,6 +62,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     GoogleMap googleMap;
     Marker leaderMarker;
     LatLng leaderLocation = new LatLng(10.141792312058117, 76.43611420148119);  //ignored
+    LatLng followerLocation;
+    public final long MIN_TIME = 5000; //5000ms=5s
+    public final float MIN_DISTANCE = 2;//2m
 
     int count;
 
@@ -87,6 +93,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 handler.post(new Runnable() {
                     public void run() {
                         if (objectId != null) {
+
                             ParseQuery<ParseObject> query = ParseQuery.getQuery(PARSE_CLASS);
                             query.getInBackground(objectId, new GetCallback<ParseObject>() {
                                 public void done(ParseObject object, ParseException e) {
@@ -108,6 +115,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                                 }
                             });
                         }
+                        getFollowerLoc(map);
                         Log.d("TIMER", "Timer Running");
                     }
                 });
@@ -133,14 +141,14 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         }
     }
 
-    private void setMarker(GoogleMap map, LatLng leaderLocation) {
+    private void setMarker(GoogleMap map, LatLng location) {
         //leaderMarker.setPosition(leaderLocation);
         //leaderMarker.setFlat(true);
-        map.addMarker(new MarkerOptions().position(leaderLocation).flat(true));
+        map.addMarker(new MarkerOptions().position(location).flat(true));
         if (count == 0) {
             map.setTrafficEnabled(true);
-            map.moveCamera(CameraUpdateFactory.newLatLngZoom(leaderLocation, 16.5f));
-            map.animateCamera(CameraUpdateFactory.newLatLngZoom(leaderLocation, 16.5f));
+            map.moveCamera(CameraUpdateFactory.newLatLngZoom(location, 16.5f));
+            map.animateCamera(CameraUpdateFactory.newLatLngZoom(location, 16.5f));
             count = 1;
         }
     }
@@ -195,5 +203,100 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 doubleBackToExitPressedOnce = false;
             }
         }, 2000);
+    }
+
+    void getFollowerLoc(GoogleMap map) {
+        LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+        LocationListener locationListener = new LeFo_LocationListener();
+        Location current_location, gps_location, network_location, followerLoc;
+        //locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, MIN_TIME, MIN_DISTANCE, locationListener);
+
+        //Initializing Location
+        gps_location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+        current_location = gps_location;
+
+
+        //Checking if current location is set using GPS provider
+        if (current_location == null) {
+            //if unable to find gps location
+            //try again
+            if (locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+                for (int i = 0; i < 100; i++) {
+                    gps_location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+                    current_location = gps_location;
+                    if (current_location != null) {
+                        break;
+                    }
+                }
+            }
+            if (current_location == null) {
+                //Searching for network location
+                network_location = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
+                current_location = network_location;
+            }
+            if (current_location == null) {
+                //trying again
+                for (int i = 0; i < 100; i++) {
+                    gps_location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+                    current_location = gps_location;
+                    if (current_location != null) {
+                        break;
+                    }
+                }
+                if (current_location == null) {
+                    //trying again
+                    for (int i = 0; i < 100; i++) {
+                        network_location = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
+                        current_location = network_location;
+                        if (current_location != null) {
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+        followerLoc = current_location;
+        followerLocation=new LatLng(followerLoc.getLatitude(),followerLoc.getLongitude());
+        showFollowerLoc(map);
+    }
+
+    private void showFollowerLoc(GoogleMap map) {
+        if (followerLocation != null) {
+            setMarker(map, followerLocation);
+        } else {
+            Toast.makeText(CON, "Failed to Locate You", Toast.LENGTH_LONG).show();
+            //Default :D
+            LatLng kanjoor = new LatLng(10.141792312058117, 76.43611420148119);
+            map.addMarker(new MarkerOptions().position(kanjoor).title("Marker in Random Location"));
+            map.setBuildingsEnabled(true);
+            map.moveCamera(CameraUpdateFactory.newLatLngZoom(kanjoor, 16.5f));
+            map.animateCamera(CameraUpdateFactory.newLatLngZoom(kanjoor, 16.5f));
+        }
+    }
+
+    class LeFo_LocationListener implements LocationListener {
+
+        @Override
+        public void onLocationChanged(Location location) {
+            if (location != null) {
+                followerLocation = new LatLng(location.getLatitude(), location.getLongitude());
+            }
+        }
+
+        @Override
+        public void onStatusChanged(String s, int i, Bundle bundle) {
+
+        }
+
+        @Override
+        public void onProviderEnabled(String s) {
+
+        }
+
+        @Override
+        public void onProviderDisabled(String s) {
+            Toast.makeText(CON, "Location was disabled. Please enable it to continue.", Toast.LENGTH_SHORT).show(); //Message when GPS is turned off
+
+        }
     }
 }
