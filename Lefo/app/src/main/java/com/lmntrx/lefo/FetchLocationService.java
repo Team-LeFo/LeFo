@@ -80,6 +80,7 @@ public class FetchLocationService extends Service {
             return super.onStartCommand(intent, flags, startId);
         }
         if (!(qrcode + "").isEmpty()) {
+            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, MIN_TIME, MIN_DISTANCE, locationListener);
 
             //--------------------------------------------------
             Thread thread = new Thread() {
@@ -92,7 +93,7 @@ public class FetchLocationService extends Service {
                         }
                         if (i >= 2) {
                             Toast.makeText(CON, "Sorry, Something is not right. Retry", Toast.LENGTH_LONG);
-                            restartApp();
+                            //restartApp();
                         }
                     } catch (Exception e) {
                         e.printStackTrace();
@@ -294,16 +295,16 @@ public class FetchLocationService extends Service {
                 if (e == null) {
                     if (parseObjects.isEmpty()) {
                         Log.d("SyncStatus", "Bad");
-                        Toast.makeText(CON, " inside if", Toast.LENGTH_LONG).show();
+                        //Toast.makeText(CON, " inside if", Toast.LENGTH_LONG).show();
                         syncStatus = false;
                         syncDB(qrcode, current_location);
                         return;
-                    } else {
+                    } /*else {
                         Toast.makeText(CON, " inside else", Toast.LENGTH_LONG).show();
-                    }
+                    }*/
                 } else {
                     Log.d("SyncStatus", "Bad");
-                    Toast.makeText(CON, " inside  second else", Toast.LENGTH_LONG).show();
+                    //Toast.makeText(CON, " inside  second else", Toast.LENGTH_LONG).show();
                     syncStatus = false;
                     syncDB(qrcode, current_location);
                     return;
