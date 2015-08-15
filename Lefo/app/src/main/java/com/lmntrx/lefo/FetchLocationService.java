@@ -208,10 +208,12 @@ public class FetchLocationService extends Service {
 
         if (!(code + "").isEmpty() || code != 0) {
             ParseObject parseObject = new ParseObject(PARSE_CLASS);
-            ParseGeoPoint geoPoint = new ParseGeoPoint(location.getLatitude(), location.getLongitude());
-            parseObject.put(KEY_QRCODE, code);
-            parseObject.put(KEY_LOCATION, geoPoint);
-            parseObject.saveInBackground();
+            if (location!=null){
+                ParseGeoPoint geoPoint = new ParseGeoPoint(location.getLatitude(), location.getLongitude());
+                parseObject.put(KEY_QRCODE, code);
+                parseObject.put(KEY_LOCATION, geoPoint);
+                parseObject.saveInBackground();
+            }
         } else {
             Log.d("SYNC", "Code is empty");
         }
