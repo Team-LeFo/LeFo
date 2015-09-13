@@ -35,4 +35,3 @@ public class FollowerStatus extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 }
-

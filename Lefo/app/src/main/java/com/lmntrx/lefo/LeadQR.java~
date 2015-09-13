@@ -123,4 +123,3 @@ public class LeadQR extends Activity {
         }, 2000);
     }
 }
-

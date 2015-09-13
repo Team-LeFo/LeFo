@@ -43,6 +43,7 @@ public class FetchLocationService extends Service {
     Location network_location = null;
     public final long MIN_TIME = 5000; //5000ms=5s
     public final float MIN_DISTANCE = 2;//2m
+
     //Fetch Location
     LocationManager locationManager;
 
@@ -75,14 +76,12 @@ public class FetchLocationService extends Service {
         try {
             qrcode = intent.getIntExtra("CODE", 000000);
         } catch (Exception e) {
-            Log.d("ERROR", "Exited App");
+            Log.e("ERROR", "Invalid Code");
             stopSelf();
             return super.onStartCommand(intent, flags, startId);
         }
         if (!(qrcode + "").isEmpty()) {
-            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, MIN_TIME, MIN_DISTANCE, locationListener);
 
-            //--------------------------------------------------
             Thread thread = new Thread() {
                 public void run() {
                     try {
@@ -92,7 +91,7 @@ public class FetchLocationService extends Service {
                             i++;
                         }
                         if (i >= 2) {
-                            Toast.makeText(CON, "Sorry, Something is not right. Retry", Toast.LENGTH_LONG);
+                            Toast.makeText(CON, "Sorry, Something is not right. Restart App", Toast.LENGTH_LONG);
                             //restartApp();
                         }
                     } catch (Exception e) {
@@ -101,8 +100,8 @@ public class FetchLocationService extends Service {
                     }
                 }
             };
+
             thread.run();
-            //----------------------------------------------------
         }
 
         //Choosing appropriate location listener
@@ -144,13 +143,17 @@ public class FetchLocationService extends Service {
             //if unable to find gps location
             //try again
             if (locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
-                for (int i = 0; i < 100; i++) {
+                for (int i = 0; i < 500; i++) {
                     gps_location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
                     current_location = gps_location;
                     if (current_location != null) {
-                        break;
+                        syncDB(qrcode, current_location);
+                        return current_location != null;
                     }
                 }
+            } else {
+                Toast.makeText(CON, "Please Enable GPS and try again", Toast.LENGTH_LONG).show();
+                stopSelf();
             }
             if (current_location == null) {
                 //Searching for network location
@@ -159,32 +162,34 @@ public class FetchLocationService extends Service {
             }
             if (current_location == null) {
                 //trying again
-                for (int i = 0; i < 100; i++) {
+                for (int i = 0; i < 500; i++) {
                     gps_location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
                     current_location = gps_location;
                     if (current_location != null) {
-                        break;
+                        syncDB(qrcode, current_location);
+                        return current_location != null;
                     }
                 }
                 if (current_location == null) {
                     //trying again
-                    for (int i = 0; i < 100; i++) {
+                    for (int i = 0; i < 500; i++) {
                         network_location = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
                         current_location = network_location;
                         if (current_location != null) {
-                            break;
+                            syncDB(qrcode, current_location);
+                            return current_location != null;
                         }
                     }
                 }
             } else {
                 //Syncing with Parse database for the first time
                 syncDB(qrcode, current_location);
-                return true;
+                return current_location != null;
             }
         } else {
             //Syncing with Parse database for the first time
             syncDB(qrcode, current_location);
-            return true;
+            return current_location != null;
         }
 
         Thread confirmer = new Thread() {      //Confirmer LOL :D
@@ -206,16 +211,14 @@ public class FetchLocationService extends Service {
 
     public void syncDB(int code, Location location) {
 
-        if (!(code + "").isEmpty() || code != 0) {
+        if ((!(code + "").isEmpty() || code != 0) && location != null) {
             ParseObject parseObject = new ParseObject(PARSE_CLASS);
-            if (location!=null){
-                ParseGeoPoint geoPoint = new ParseGeoPoint(location.getLatitude(), location.getLongitude());
-                parseObject.put(KEY_QRCODE, code);
-                parseObject.put(KEY_LOCATION, geoPoint);
-                parseObject.saveInBackground();
-            }
+            ParseGeoPoint geoPoint = new ParseGeoPoint(location.getLatitude(), location.getLongitude());
+            parseObject.put(KEY_QRCODE, code);
+            parseObject.put(KEY_LOCATION, geoPoint);
+            parseObject.saveInBackground();
         } else {
-            Log.d("SYNC", "Code is empty");
+            Log.e("SYNC", "Code is empty or location is empty");
         }
     }
 
@@ -301,9 +304,7 @@ public class FetchLocationService extends Service {
                         syncStatus = false;
                         syncDB(qrcode, current_location);
                         return;
-                    } /*else {
-                        Toast.makeText(CON, " inside else", Toast.LENGTH_LONG).show();
-                    }*/
+                    }
                 } else {
                     Log.d("SyncStatus", "Bad");
                     //Toast.makeText(CON, " inside  second else", Toast.LENGTH_LONG).show();

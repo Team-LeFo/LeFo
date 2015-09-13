@@ -15,7 +15,6 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.PowerManager;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 import android.widget.Toast;
@@ -77,10 +76,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     int count;
 
-    //Variables for preventing screen lock
-    PowerManager powerManager;
-    PowerManager.WakeLock wakeLock;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -89,10 +84,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
-
-        //Wake_Lock
-        powerManager = (PowerManager)CON.getSystemService(Context.POWER_SERVICE);
-        wakeLock = powerManager.newWakeLock(PowerManager.FULL_WAKE_LOCK, "My Lock");
 
         code = getIntent().getStringExtra("CODE");
         objectId = getIntent().getStringExtra("OBJECT_ID");
@@ -132,7 +123,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                                 }
                             });
                         }
-                        //getFollowerLoc(map);
+                        getFollowerLoc(map);
                         Log.d("TIMER", "Timer Running");
                     }
                 });
@@ -179,14 +170,14 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         map.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition), 1000, null);
         //---------------------------------------------
         //map.addMarker(new MarkerOptions().position(location).flat(true));
-        //if (count == 0) {
+        if (count == 0) {
             map.setTrafficEnabled(true);
             map.moveCamera(CameraUpdateFactory.newLatLngZoom(location, 16.5f));
             //map.animateCamera(CameraUpdateFactory.newLatLngZoom(location, 16.5f));
             map.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition),
                     1000, null);
-          //  count = 1;
-        //}
+            count = 1;
+        }
     }
 
     @Override
@@ -194,7 +185,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         //leaderMarkerOptions = new MarkerOptions().flat(true).title("Leader's Location").position(leaderLocation);
         //leaderMarker = map.addMarker(leaderMarkerOptions);
         getLeaderLoc(map);
-    }//FIX IT!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    }
 
     public void reset() {
         if (resumed) {
@@ -211,13 +202,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     protected void onResume() {
         super.onResume();
         //reset();
-        wakeLock.acquire();
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        wakeLock.release();
     }
 
     @Override
@@ -382,4 +371,3 @@ class MapsActivity extends Activity implements OnMapReadyCallback {
                 2000, null);
     }
 }*/
-
