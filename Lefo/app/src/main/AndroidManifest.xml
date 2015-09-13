@@ -13,7 +13,7 @@
         android:allowBackup="true"
         android:icon="@drawable/lefo_icon"
         android:label="@string/app_name"
-        android:theme="@style/AppTheme" >
+        android:theme="@style/lefomat" >
         <activity
             android:name=".MainActivity"
             android:label="@string/app_name" >

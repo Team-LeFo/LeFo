@@ -56,7 +56,8 @@
             android:textSize="@dimen/main_button_texts"
             android:background="@android:color/transparent"
             android:textColor="@color/abc_search_url_text"
-            android:onClick="qrCode"/>
+            android:onClick="qrCode"
+            android:elevation="5dp" />
 
         <ProgressBar
             android:layout_width="wrap_content"
