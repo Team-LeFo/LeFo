@@ -26,11 +26,7 @@
         </activity>
         <activity
             android:name=".LeadQR"
-            android:label="@string/title_activity_lead_qr"
-            android:parentActivityName=".MainActivity" >
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.lmntrx.lefo.MainActivity" />
+            android:label="@string/title_activity_lead_qr">
         </activity>
         <activity
             android:name=".FollowCode"
