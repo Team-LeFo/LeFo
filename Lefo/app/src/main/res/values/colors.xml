@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="primaraay">#ff64c2f4</color>
+    <color name="actionbar_background_settings">#FF8300</color>
+    <color name="actionbar_background_about">#006400</color>
+    <color name="actionbar_background_youwon">#ebed14</color>
+</resources>

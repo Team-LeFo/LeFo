@@ -1,0 +1,22 @@
+<!-- Material -->
+<resources>
+    <!-- lefomat theme inherits from the material theme -->
+    <style name="lefomat" parent="android:Theme.Material.Light">
+        <!-- theme customizations -->
+        <!-- Main theme colors -->
+        <!--   your app branding color for the app bar -->
+        <item name="android:colorPrimary">@color/primary</item>
+        <!--   darker variant for the status bar and contextual app bars -->
+        <item name="android:colorPrimaryDark">@color/primary_dark</item>
+        <!--   theme UI controls like checkboxes and text fields -->
+        <item name="android:colorAccent">@color/accent</item>
+        <!--  Text Color  -->
+        <item name="android:textColorPrimary">@color/textwhite</item>
+        <!--  Background Window Color  -->
+        <item name="android:windowBackground">@color/windowback</item>
+        <!-- Bottom Navigationbar color -->
+        <item name="android:navigationBarColor">@color/accent</item>
+
+
+    </style>
+</resources>
