@@ -33,22 +33,29 @@ import com.google.android.gms.maps.model.*;
 import android.app.Activity;
 import android.os.Bundle;
 
+import com.parse.FindCallback;
 import com.parse.GetCallback;
 import com.parse.ParseException;
 import com.parse.ParseGeoPoint;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
 
+import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
+
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
 
     //Parse Class Name
     public static final String PARSE_CLASS = "LeFo_DB";
+    public static final String PARSE_FCLASS = "Followers";
 
     //Parse Keys
     public static final String KEY_QRCODE = "QR_CODE";
+    public static final String KEY_CON_CODE = "Con_Code";
+    public static final String KEY_DEVICE = "deviceName";
+    public static final String KEY_isActive = "isActive";
     public static final String KEY_LOCATION = "LOCATION";
 
     //Parse ObjectID
@@ -56,7 +63,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     ParseGeoPoint leaderLoc;
     ParseGeoPoint oldleaderLoc;
     String code;
-    String objectID;
+    String fObjectID;
+
+
+    boolean isActive;
 
     Context CON;
 
@@ -81,6 +91,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     PowerManager powerManager;
     PowerManager.WakeLock wakeLock;
 
+    String deviceName=MainActivity.DEVICE_NAME;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -98,6 +110,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         objectId = getIntent().getStringExtra("OBJECT_ID");
 
         count = 0;
+
+        isActive=true;
+        registerFollower();
+
+
     }
 
 
@@ -194,7 +211,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         //leaderMarkerOptions = new MarkerOptions().flat(true).title("Leader's Location").position(leaderLocation);
         //leaderMarker = map.addMarker(leaderMarkerOptions);
         getLeaderLoc(map);
-    }//FIX IT!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    }
 
     public void reset() {
         if (resumed) {
@@ -212,25 +229,30 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         super.onResume();
         //reset();
         wakeLock.acquire();
+        isActive=true;
+        updateFollowerStatus();
     }
 
     @Override
     protected void onPause() {
         super.onPause();
         wakeLock.release();
+        isActive=false;
+        updateFollowerStatus();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        isActive=false;
+        updateFollowerStatus();
     }
 
     @Override
     public void onBackPressed() {
         if (doubleBackToExitPressedOnce) {
             //On Back
-            MainActivity.getMainActivity.finish();
-            Intent intent = new Intent(CON, MainActivity.class);
-            startActivity(intent);
             mapsActivity.finish();
-
-            System.exit(0);
-            return;
         }
 
         this.doubleBackToExitPressedOnce = true;
@@ -337,6 +359,49 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             Toast.makeText(CON, "Location was disabled. Please enable it to continue.", Toast.LENGTH_SHORT).show(); //Message when GPS is turned off
 
         }
+    }
+
+    public void registerFollower(){
+        ParseObject parseObject = new ParseObject(PARSE_FCLASS);
+        parseObject.put(KEY_CON_CODE, code);
+        parseObject.put(KEY_DEVICE, deviceName );
+        parseObject.put(KEY_isActive, isActive);
+        parseObject.saveInBackground();
+        //Toast.makeText(CON,"Hi from registerfollower()",Toast.LENGTH_LONG).show();
+    }
+
+    public void updateFollowerStatus(){
+        ParseQuery<ParseObject> queryID = ParseQuery.getQuery(PARSE_FCLASS);
+        queryID.whereEqualTo(KEY_CON_CODE, code);
+        queryID.findInBackground(new FindCallback<ParseObject>() {
+            @Override
+            public void done(List<ParseObject> parseObjects, ParseException e) {
+                if (e == null) {
+                    for (ParseObject result : parseObjects) {
+                        // Retrieving objectId
+                        fObjectID= result.getObjectId();
+                    }
+                    // Retrieving data from object
+                    if (fObjectID!= null) {
+                        ParseQuery<ParseObject> query = ParseQuery.getQuery(PARSE_FCLASS);
+                        query.getInBackground(fObjectID, new GetCallback<ParseObject>() {
+                            public void done(ParseObject parseUpdateObject, ParseException e) {
+                                if (e == null) {
+                                    parseUpdateObject.put(KEY_isActive, isActive);
+                                    parseUpdateObject.saveInBackground();
+                                } else {
+                                    Toast.makeText(CON, e.getMessage(), Toast.LENGTH_LONG).show();
+                                }
+                            }
+                        });
+                    }
+                } else {
+                    //Incase of an unknown error
+                    Toast.makeText(CON, e.getMessage(), Toast.LENGTH_LONG).show();
+                }
+            }
+        });
+
     }
 }
 

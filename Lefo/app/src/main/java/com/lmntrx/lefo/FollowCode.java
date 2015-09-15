@@ -52,6 +52,8 @@ public class FollowCode extends Activity {
 
     boolean doubleBackToExitPressedOnce;
 
+    String deviceName=MainActivity.DEVICE_NAME;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

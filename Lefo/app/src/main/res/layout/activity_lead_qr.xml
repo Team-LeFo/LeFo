@@ -10,7 +10,6 @@
         android:orientation="vertical"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
-        android:layout_above="@+id/textView"
         android:gravity="center">
 
         <ImageView
@@ -19,22 +18,25 @@
             android:id="@+id/qrIMG"
             android:gravity="center"
             android:src="@drawable/loading"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="38sp"
+            android:id="@+id/lCodeTXT"
+            android:gravity="center|center_horizontal"
+            android:textColor="@color/abc_search_url_text"
+            android:background="@android:color/transparent" />
+
     </LinearLayout>
 
     <Button
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Journey Already Started?"
-        android:textSize="38sp"
-        android:id="@+id/textView"
-        android:onClick="shareCode"
-        android:gravity="center|center_horizontal"
-        android:textColor="@color/abc_search_url_text"
+        android:onClick="statusActivity"
+        android:text="View Followers"
+        android:textColor="@color/abc_primary_text_material_dark"
+        android:background="@color/material_deep_teal_200"
         android:layout_alignParentBottom="true"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentRight="true"
-        android:background="@android:color/transparent" />
+        android:layout_centerHorizontal="true" />
 
 </RelativeLayout>

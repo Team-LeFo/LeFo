@@ -7,8 +7,13 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.ShareActionProvider;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.Random;
@@ -40,14 +45,25 @@ public class LeadQR extends Activity {
 
     boolean doubleBackToExitPressedOnce;
 
+    private ShareActionProvider mShareActionProvider;
+
+    Intent sharingIntent;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_lead_qr);
+
         qr_Img = (ImageView) findViewById(R.id.qrIMG);
         CON = this.getApplicationContext();
         qrcode = randNum();
+
+        //Share Intent customisation
+        sharingIntent = new Intent(android.content.Intent.ACTION_SEND);
+        sharingIntent.setType("text/plain");
+        sharingIntent.putExtra(android.content.Intent.EXTRA_SUBJECT, "LeFo Connection Code");
+        String shareBody = qrcode + "";
+        sharingIntent.putExtra(android.content.Intent.EXTRA_TEXT, shareBody);
 
         //Starting location fetch
         startLocationService();
@@ -58,6 +74,13 @@ public class LeadQR extends Activity {
         //Dealing with ProgressBar
         MainActivity.mProgressBar.setVisibility(View.INVISIBLE);
 
+        //Display Lefo_Connection_Code
+        TextView lcodeTXT=(TextView)findViewById(R.id.lCodeTXT);
+        lcodeTXT.setText(qrcode+"");
+
+
+
+
     }
 
     //Random Code Generator
@@ -67,36 +90,10 @@ public class LeadQR extends Activity {
         return random.nextInt((max - min + 1) + min);
     }
 
-    //Share Dialog Builder
-    public void shareCode(View view) {
-        final AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setMessage("" + qrcode)
-                .setTitle("LeFo Connection Code")
-                .setCancelable(true)
-                .setPositiveButton("Share", new DialogInterface.OnClickListener() {
-                    public void onClick(@SuppressWarnings("unused") final DialogInterface dialog, @SuppressWarnings("unused") final int id) {
-                        Intent sharingIntent = new Intent(android.content.Intent.ACTION_SEND);
-                        sharingIntent.setType("text/plain");
-                        sharingIntent.putExtra(android.content.Intent.EXTRA_SUBJECT, "LeFo Connection Code");
-                        String shareBody = qrcode + "";
-                        sharingIntent.putExtra(android.content.Intent.EXTRA_TEXT, shareBody);
-                        startActivity(Intent.createChooser(sharingIntent, "Share via"));
-                    }
-                })
-                .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                    public void onClick(final DialogInterface dialog, @SuppressWarnings("unused") final int id) {
-                        dialog.cancel();
-                    }
-                });
-        final AlertDialog alert = builder.create();
-        alert.show();
-    }
-
     //Starts Location Service
     public void startLocationService() {
         /*Service is called on the same thread. Even if I enclose the following code in a new thread
         the service will only run on the main thread. I have put code into different threads in FetchLocationService.java*/
-
         Intent serviceIntent = new Intent(CON, FetchLocationService.class);
         serviceIntent.putExtra("CODE", qrcode);
         startService(serviceIntent);
@@ -122,5 +119,37 @@ public class LeadQR extends Activity {
             }
         }, 2000);
     }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate menu resource file.
+        getMenuInflater().inflate(R.menu.menu_lead_qr, menu);
+
+        // Locate MenuItem with ShareActionProvider
+        MenuItem item = menu.findItem(R.id.menu_item_share);
+
+        // Fetch and store ShareActionProvider
+        mShareActionProvider = (ShareActionProvider) item.getActionProvider();
+
+        setShareIntent(sharingIntent);
+
+        // Return true to display menu
+        return true;
+    }
+
+    // Call to update the share intent
+    private void setShareIntent(Intent shareIntent) {
+        if (mShareActionProvider != null) {
+            mShareActionProvider.setShareIntent(shareIntent);
+        }
+    }
+
+    public void statusActivity(View view){
+        Intent intent=new Intent(CON,FollowerStatus.class);
+        intent.putExtra("CODE", qrcode);
+        startActivity(intent);
+    }
+
+
 }
 

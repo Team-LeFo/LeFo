@@ -10,6 +10,7 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.View;
@@ -43,6 +44,10 @@ public class MainActivity extends Activity {
     //MainActivity Instance
     public static Activity getMainActivity;
 
+    public static String DEVICE_NAME=getDeviceName();
+
+    boolean isInitialised=false;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,7 +63,10 @@ public class MainActivity extends Activity {
         mProgressBar.setVisibility(View.INVISIBLE);
 
         //Initializing Parse BackEnd Support
-        Parse.initialize(this, PARSE_APP_KEY, PARSE_CLIENT_KEY);
+        if(!isInitialised) {
+            Parse.initialize(this, PARSE_APP_KEY, PARSE_CLIENT_KEY);
+            isInitialised=true;
+        }
         ParseAnalytics.trackAppOpenedInBackground(getIntent());
 
         //Internet Connectivity Status Check
@@ -83,6 +91,7 @@ public class MainActivity extends Activity {
                 kickStartGPS();
             }
         }
+        //Toast.makeText(context,DEVICE_NAME,Toast.LENGTH_LONG).show();
     }
 
     //InnerClass LocationListener
@@ -121,7 +130,7 @@ public class MainActivity extends Activity {
     }
 
 
-    //FollowCode Intent PS:Later Change it to FollowQR
+    //FollowCode Intent
     public void follow(View v) {
         Intent intent = new Intent(this, FollowCode.class);
         startActivity(intent);
@@ -182,7 +191,7 @@ public class MainActivity extends Activity {
         int statusCode= GooglePlayServicesUtil.isGooglePlayServicesAvailable(this);
         if (statusCode!= ConnectionResult.SUCCESS){
             if (GooglePlayServicesUtil.isUserRecoverableError(statusCode)){
-                Toast.makeText(this,statusCode+"",Toast.LENGTH_LONG).show();
+                Toast.makeText(this,statusCode+": Update or install Google play services to continue",Toast.LENGTH_LONG).show();
             }else{
                 Toast.makeText(this,statusCode+": Google play services not available",Toast.LENGTH_LONG).show();
             }
@@ -206,6 +215,29 @@ public class MainActivity extends Activity {
                 doubleBackToExitPressedOnce = false;
             }
         }, 2000);
+    }
+
+    public static String getDeviceName() {
+        String manufacturer = Build.MANUFACTURER;
+        String model = Build.MODEL;
+        if (model.startsWith(manufacturer)) {
+            return capitalize(model);
+        } else {
+            return capitalize(manufacturer) + " " + model;
+        }
+    }
+
+
+    private static String capitalize(String s) {
+        if (s == null || s.length() == 0) {
+            return "";
+        }
+        char first = s.charAt(0);
+        if (Character.isUpperCase(first)) {
+            return s;
+        } else {
+            return Character.toUpperCase(first) + s.substring(1);
+        }
     }
 
 
