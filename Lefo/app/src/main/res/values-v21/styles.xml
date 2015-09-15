@@ -13,12 +13,9 @@
         <!--  Text Color  -->
         <item name="android:textColorPrimary">@color/texticons</item>
         <!--  Background Window Color  -->
-        <item name="android:windowBackground">@color/light_primary</item>
+        <item name="android:windowBackground">@color/background_color</item>
         <!-- Bottom Navigationbar color -->
         <item name="android:navigationBarColor">@color/primary_text</item>
-
-
-
 
 
 

@@ -15,48 +15,67 @@
 
         <Space
             android:layout_width="match_parent"
-            android:layout_height="45dp"/>
+            android:layout_height="50dp"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="0dp" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="LeFo Code"
+            android:textSize="@dimen/abc_text_size_body_2_material"
+            android:id="@+id/textView"
+            android:textColor="@color/accent"
+            android:layout_gravity="center_horizontal" />
 
         <EditText
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="Enter Code Here"
-            android:textSize="40sp"
+            android:textColorHint="@color/secondary_text"
+            android:textSize="25sp"
             android:id="@+id/insertCode"
             android:gravity="center"
             android:inputType="number"
             android:maxLength="8"
             android:maxLines="1"
-            android:textColor="@color/secondary_text"/>
+            android:textColor="@color/accent"/>
 
         <Space
             android:layout_width="match_parent"
             android:layout_height="45dp" />
 
         <Button
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Start pursuit"
             android:id="@+id/connectBTN"
-            android:textSize="@dimen/main_button_texts"
-            android:background="@android:color/transparent"
-            android:textColor="@color/primary_text"
+            android:textSize="@dimen/abc_text_size_button_material"
+            android:background="@drawable/buttonb"
+            android:textColor="@color/texticons"
             android:onClick="connect"/>
+
+        <Space
+            android:layout_width="match_parent"
+            android:layout_height="30dp" />
+
         <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:hint="or"
-            android:textSize="@dimen/main_button_texts"
-            android:textColor="@color/secondary_text"
-            android:gravity="center" />
-        <Button
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Got a QR Code?"
+            android:text="QR Code"
+            android:textSize="@dimen/abc_text_size_body_2_material"
+            android:textColor="@color/accent"
+            android:layout_gravity="center_horizontal"
+            android:id="@+id/textView2" />
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Scan QR Code"
             android:id="@+id/qrCodeBTN"
-            android:textSize="@dimen/main_button_texts"
-            android:background="@android:color/transparent"
-            android:textColor="@color/primary_text"
+            android:textSize="@dimen/abc_text_size_button_material"
+            android:background="@drawable/buttono"
+            android:textColor="@color/texticons"
             android:onClick="qrCode"
             android:elevation="5dp" />
 
