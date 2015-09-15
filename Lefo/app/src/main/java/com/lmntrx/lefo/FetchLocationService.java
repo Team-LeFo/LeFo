@@ -110,13 +110,6 @@ public class FetchLocationService extends Service {
         return super.onStartCommand(intent, flags, startId);
     }
 
-    private void restartApp() {
-        Intent i = getBaseContext().getPackageManager().getLaunchIntentForPackage(getBaseContext().getPackageName());
-        i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        startActivity(i);
-
-    }
-
     @Override
     public void onDestroy() {
         super.onDestroy();
@@ -290,7 +283,6 @@ public class FetchLocationService extends Service {
     }
 
     public boolean confirmSync() {
-        //       Toast.makeText(CON,"confirmSync() called",Toast.LENGTH_LONG).show();
         syncStatus = false;
         ParseQuery<ParseObject> queryID = ParseQuery.getQuery(PARSE_CLASS);
         queryID.whereEqualTo(KEY_QRCODE, qrcode);
@@ -300,14 +292,12 @@ public class FetchLocationService extends Service {
                 if (e == null) {
                     if (parseObjects.isEmpty()) {
                         Log.d("SyncStatus", "Bad");
-                        //Toast.makeText(CON, " inside if", Toast.LENGTH_LONG).show();
                         syncStatus = false;
                         syncDB(qrcode, current_location);
                         return;
                     }
                 } else {
                     Log.d("SyncStatus", "Bad");
-                    //Toast.makeText(CON, " inside  second else", Toast.LENGTH_LONG).show();
                     syncStatus = false;
                     syncDB(qrcode, current_location);
                     return;

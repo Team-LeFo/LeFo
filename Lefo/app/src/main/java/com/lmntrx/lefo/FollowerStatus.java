@@ -7,6 +7,7 @@ import android.content.Context;
 import android.content.CursorLoader;
 import android.content.Loader;
 import android.database.Cursor;
+import android.os.Handler;
 import android.provider.ContactsContract;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -33,6 +34,8 @@ import com.parse.ParseQuery;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class FollowerStatus extends Activity {
 
@@ -67,6 +70,53 @@ public class FollowerStatus extends Activity {
 
         loadFollowers();
 
+        Timer t=new Timer();
+        final Handler handler = new Handler();
+        TimerTask task=new TimerTask() {
+            @Override
+            public void run() {
+                handler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        refreshList();
+                    }
+                });
+            }
+        };
+        t.schedule(task,2000,2000);
+
+    }
+
+    public void refreshList(){
+        ParseQuery query=new ParseQuery(PARSE_FCLASS);
+        query.findInBackground(new FindCallback<ParseObject>() {
+            @Override
+            public void done(List<ParseObject> results, com.parse.ParseException e) {
+                if(e==null){
+                    ArrayList<HashMap<String,String>> infos= new ArrayList<HashMap<String,String>>();
+                    for (ParseObject result : results){
+                        HashMap<String,String> info=new HashMap<String, String>();
+                        if ((myCode+"").equals(result.getString(KEY_CON_CODE))){
+                            info.put(KEY_DEVICE,result.getString(KEY_DEVICE));
+                            infos.add(info);
+                        }
+                    }
+                    if (infos.isEmpty())
+                    {
+                        HashMap<String,String> info=new HashMap<String, String>();
+                        info.put(KEY_DEVICE,"No Followers");
+                        infos.add(info);
+                    }
+                    SimpleAdapter adapter=new SimpleAdapter(CON,infos,R.layout.list_item,new String[]{KEY_DEVICE},new int[] {R.id.list_item_field});
+                    lv.setAdapter(adapter);
+                }
+                else {
+                    e.printStackTrace();
+                    System.out.print(e.getMessage());
+                }
+            }
+        });
+
     }
 
 
@@ -74,7 +124,7 @@ public class FollowerStatus extends Activity {
     public void loadFollowers(){
         mProgressBar.setVisibility(View.VISIBLE);
 
-         ParseQuery query=new ParseQuery(PARSE_FCLASS);
+        ParseQuery query=new ParseQuery(PARSE_FCLASS);
         query.findInBackground(new FindCallback<ParseObject>() {
             @Override
             public void done(List<ParseObject> results, com.parse.ParseException e) {
@@ -97,8 +147,10 @@ public class FollowerStatus extends Activity {
                     SimpleAdapter adapter=new SimpleAdapter(CON,infos,R.layout.list_item,new String[]{KEY_DEVICE},new int[] {R.id.list_item_field});
                     lv.setAdapter(adapter);
                 }
-                else {e.printStackTrace();
-                    System.out.print(e.getMessage());}
+                else {
+                    e.printStackTrace();
+                    System.out.print(e.getMessage());
+                }
             }
         });
     }
