@@ -72,7 +72,6 @@ public class FollowerStatus extends Activity {
 
 
     public void loadFollowers(){
-        Toast.makeText(CON,myCode+"",Toast.LENGTH_LONG).show();
         mProgressBar.setVisibility(View.VISIBLE);
 
          ParseQuery query=new ParseQuery(PARSE_FCLASS);
@@ -86,11 +85,16 @@ public class FollowerStatus extends Activity {
                         HashMap<String,String> info=new HashMap<String, String>();
                         if ((myCode+"").equals(result.getString(KEY_CON_CODE))){
                             info.put(KEY_DEVICE,result.getString(KEY_DEVICE));
-                            info.put(KEY_CON_CODE,result.getString(KEY_CON_CODE));
                             infos.add(info);
                         }
                     }
-                    SimpleAdapter adapter=new SimpleAdapter(CON,infos,R.layout.list_item,new String[]{KEY_DEVICE,KEY_CON_CODE},new int[] {R.id.list_item_field,R.id.list_item_field2});
+                    if (infos.isEmpty())
+                    {
+                        HashMap<String,String> info=new HashMap<String, String>();
+                        info.put(KEY_DEVICE,"No Followers");
+                        infos.add(info);
+                    }
+                    SimpleAdapter adapter=new SimpleAdapter(CON,infos,R.layout.list_item,new String[]{KEY_DEVICE},new int[] {R.id.list_item_field});
                     lv.setAdapter(adapter);
                 }
                 else {e.printStackTrace();
