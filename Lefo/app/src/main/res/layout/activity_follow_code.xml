@@ -26,7 +26,8 @@
             android:gravity="center"
             android:inputType="number"
             android:maxLength="8"
-            android:maxLines="1" />
+            android:maxLines="1"
+            android:textColor="@color/secondary_text"/>
 
         <Space
             android:layout_width="match_parent"
@@ -39,14 +40,14 @@
             android:id="@+id/connectBTN"
             android:textSize="@dimen/main_button_texts"
             android:background="@android:color/transparent"
-            android:textColor="@color/abc_search_url_text"
+            android:textColor="@color/primary_text"
             android:onClick="connect"/>
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:hint="or"
             android:textSize="@dimen/main_button_texts"
-            android:textColor="@color/abc_search_url_text"
+            android:textColor="@color/secondary_text"
             android:gravity="center" />
         <Button
             android:layout_width="match_parent"
@@ -55,7 +56,7 @@
             android:id="@+id/qrCodeBTN"
             android:textSize="@dimen/main_button_texts"
             android:background="@android:color/transparent"
-            android:textColor="@color/abc_search_url_text"
+            android:textColor="@color/primary_text"
             android:onClick="qrCode"
             android:elevation="5dp" />
 

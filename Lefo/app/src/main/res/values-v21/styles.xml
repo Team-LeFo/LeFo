@@ -11,11 +11,15 @@
         <!--   theme UI controls like checkboxes and text fields -->
         <item name="android:colorAccent">@color/accent</item>
         <!--  Text Color  -->
-        <item name="android:textColorPrimary">@color/textwhite</item>
+        <item name="android:textColorPrimary">@color/texticons</item>
         <!--  Background Window Color  -->
-        <item name="android:windowBackground">@color/windowback</item>
+        <item name="android:windowBackground">@color/light_primary</item>
         <!-- Bottom Navigationbar color -->
-        <item name="android:navigationBarColor">@color/accent</item>
+        <item name="android:navigationBarColor">@color/primary_text</item>
+
+
+
+
 
 
     </style>

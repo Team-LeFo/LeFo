@@ -4,7 +4,7 @@
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
     android:paddingBottom="@dimen/activity_vertical_margin" tools:context="com.groot.lefo.LeadQR"
-    android:background="#ffffff">
+    >
 
     <LinearLayout
         android:orientation="vertical"
@@ -24,7 +24,7 @@
             android:textSize="38sp"
             android:id="@+id/lCodeTXT"
             android:gravity="center|center_horizontal"
-            android:textColor="@color/abc_search_url_text"
+            android:textColor="@color/primary"
             android:background="@android:color/transparent" />
 
     </LinearLayout>
@@ -34,8 +34,8 @@
         android:layout_height="wrap_content"
         android:onClick="statusActivity"
         android:text="View Followers"
-        android:textColor="@color/abc_primary_text_material_dark"
-        android:background="@color/material_deep_teal_200"
+        android:textColor="@color/primary_text"
+        android:background="@color/accent"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true" />
 
