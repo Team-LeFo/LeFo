@@ -60,6 +60,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     //Parse ObjectID
     public static String objectId = null;
+
     ParseGeoPoint leaderLoc;
     ParseGeoPoint oldleaderLoc;
     String code;
@@ -75,10 +76,19 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     boolean doubleBackToExitPressedOnce;
     boolean resumed = false;
 
-    MarkerOptions leaderMarkerOptions;
-    MarkerOptions followerMarkerOptions;
+    /*MarkerOptions leaderMarkerOptions=new MarkerOptions()
+            .icon(BitmapDescriptorFactory.fromResource(R.drawable.orangemarker))
+            .flat(true)
+            .anchor(0.5f, 0)
+            .rotation(0);
+    MarkerOptions followerMarkerOptions=new MarkerOptions()
+            .icon(BitmapDescriptorFactory.fromResource(R.drawable.bluemarker))
+            .flat(true)
+            .anchor(0.5f, 0)
+            .rotation(0);*/
     GoogleMap googleMap;
     Marker leaderMarker;
+
     Marker followerMarker;
     LatLng leaderLocation = new LatLng(10.141792312058117, 76.43611420148119);  //ignored
     LatLng followerLocation;
@@ -101,6 +111,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
+
 
         //Wake_Lock
         powerManager = (PowerManager)CON.getSystemService(Context.POWER_SERVICE);
@@ -133,13 +144,13 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                                 public void done(ParseObject object, ParseException e) {
                                     if (e == null) {
                                         if (object != null) {
-                                            //if(leaderLoc!=oldleaderLoc){
+                                            if(leaderLoc!=oldleaderLoc){
                                             leaderLoc = object.getParseGeoPoint(KEY_LOCATION);
                                             showLeaderLoc(map);
                                             oldleaderLoc = leaderLoc;
-                                            //}else {
+                                            }else {
                                             //Toast.makeText(CON,"Here",Toast.LENGTH_LONG).show();
-                                            //}
+                                            }
                                         }
                                     } else {
                                         Toast.makeText(CON, "Location not found", Toast.LENGTH_LONG).show();
@@ -181,7 +192,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         //-----------------------------------------------
 
         map.addMarker(new MarkerOptions()
-                .icon(BitmapDescriptorFactory.fromResource(R.drawable.direction_arrow2))
+                //.icon(BitmapDescriptorFactory.fromResource(R.drawable.direction_arrow2))
                 .position(location)
                 .flat(true)
                 .anchor(0.5f, 0)

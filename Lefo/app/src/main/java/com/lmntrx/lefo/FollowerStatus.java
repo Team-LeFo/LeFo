@@ -96,7 +96,8 @@ public class FollowerStatus extends Activity {
                     ArrayList<HashMap<String,String>> infos= new ArrayList<HashMap<String,String>>();
                     for (ParseObject result : results){
                         HashMap<String,String> info=new HashMap<String, String>();
-                        if ((myCode+"").equals(result.getString(KEY_CON_CODE))){
+                        if ((myCode+"").equals(result.getString(KEY_CON_CODE)) && result.getBoolean(KEY_isActive))
+                        {
                             info.put(KEY_DEVICE,result.getString(KEY_DEVICE));
                             infos.add(info);
                         }
@@ -133,7 +134,7 @@ public class FollowerStatus extends Activity {
                     ArrayList<HashMap<String,String>> infos= new ArrayList<HashMap<String,String>>();
                     for (ParseObject result : results){
                         HashMap<String,String> info=new HashMap<String, String>();
-                        if ((myCode+"").equals(result.getString(KEY_CON_CODE))){
+                        if ((myCode+"").equals(result.getString(KEY_CON_CODE)) && result.getBoolean(KEY_isActive)){
                             info.put(KEY_DEVICE,result.getString(KEY_DEVICE));
                             infos.add(info);
                         }
