@@ -8,7 +8,9 @@ package com.lmntrx.lefo;
  */
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.location.Location;
 import android.location.LocationListener;
@@ -76,16 +78,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     boolean doubleBackToExitPressedOnce;
     boolean resumed = false;
 
-    /*MarkerOptions leaderMarkerOptions=new MarkerOptions()
-            .icon(BitmapDescriptorFactory.fromResource(R.drawable.orangemarker))
-            .flat(true)
-            .anchor(0.5f, 0)
-            .rotation(0);
-    MarkerOptions followerMarkerOptions=new MarkerOptions()
-            .icon(BitmapDescriptorFactory.fromResource(R.drawable.bluemarker))
-            .flat(true)
-            .anchor(0.5f, 0)
-            .rotation(0);*/
+    MarkerOptions leaderMarkerOptions;
+    MarkerOptions followerMarkerOptions;
+
     GoogleMap googleMap;
     Marker leaderMarker;
 
@@ -111,6 +106,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
+
+
 
 
         //Wake_Lock
@@ -144,16 +141,14 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                                 public void done(ParseObject object, ParseException e) {
                                     if (e == null) {
                                         if (object != null) {
-                                            if(leaderLoc!=oldleaderLoc){
+                                            //if(leaderLoc!=oldleaderLoc){
                                             leaderLoc = object.getParseGeoPoint(KEY_LOCATION);
                                             showLeaderLoc(map);
                                             oldleaderLoc = leaderLoc;
-                                            }else {
-                                            //Toast.makeText(CON,"Here",Toast.LENGTH_LONG).show();
-                                            }
+                                            //}
                                         }
                                     } else {
-                                        Toast.makeText(CON, "Location not found", Toast.LENGTH_LONG).show();
+                                        alertSessionEnd();
                                         e.printStackTrace();
                                         return;
                                     }
@@ -187,16 +182,20 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     }
 
     private void setMarker(GoogleMap map, LatLng location) {
-        //leaderMarker.setPosition(leaderLocation); old
-        //leaderMarker.setFlat(true);   old
-        //-----------------------------------------------
+        //leaderMarker.setPosition(leaderLocation);
 
-        map.addMarker(new MarkerOptions()
+
+        /*map.addMarker(new MarkerOptions()
                 //.icon(BitmapDescriptorFactory.fromResource(R.drawable.direction_arrow2))
                 .position(location)
                 .flat(true)
                 .anchor(0.5f, 0)
-                .rotation(0));
+                .rotation(0));*/
+
+        leaderMarkerOptions.position(location);
+
+        leaderMarker=map.addMarker(leaderMarkerOptions);
+        //followerMarker=map.addMarker(followerMarkerOptions);
         CameraPosition cameraPosition = CameraPosition.builder()
                 .target(location)
                 .zoom(16.5f)
@@ -204,23 +203,34 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 .build();
 
         // Animate the change in camera view over 2 seconds
-        map.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition), 1000, null);
+        //map.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition), 1000, null);
         //---------------------------------------------
         //map.addMarker(new MarkerOptions().position(location).flat(true));
-        //if (count == 0) {
+        if (count == 0) {
             map.setTrafficEnabled(true);
-            map.moveCamera(CameraUpdateFactory.newLatLngZoom(location, 16.5f));
+            //map.moveCamera(CameraUpdateFactory.newLatLngZoom(location, 16.5f));
             //map.animateCamera(CameraUpdateFactory.newLatLngZoom(location, 16.5f));
-            map.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition),
-                    1000, null);
-          //  count = 1;
-        //}
+            map.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition),1000, null);
+            count = 1;
+        }
     }
 
     @Override
     public void onMapReady(GoogleMap map) {
         //leaderMarkerOptions = new MarkerOptions().flat(true).title("Leader's Location").position(leaderLocation);
         //leaderMarker = map.addMarker(leaderMarkerOptions);
+        leaderMarkerOptions=new MarkerOptions()
+                .icon(BitmapDescriptorFactory.fromResource(R.drawable.orangemarker))
+                .flat(true)
+                .anchor(0.5f, 0)
+                .rotation(0);
+
+        followerMarkerOptions=new MarkerOptions()
+                .icon(BitmapDescriptorFactory.fromResource(R.drawable.bluemarker))
+                .flat(true)
+                .anchor(0.5f, 0)
+                .rotation(0);
+
         getLeaderLoc(map);
     }
 
@@ -390,10 +400,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 if (e == null) {
                     for (ParseObject result : parseObjects) {
                         // Retrieving objectId
-                        fObjectID= result.getObjectId();
+                        fObjectID = result.getObjectId();
                     }
                     // Retrieving data from object
-                    if (fObjectID!= null) {
+                    if (fObjectID != null) {
                         ParseQuery<ParseObject> query = ParseQuery.getQuery(PARSE_FCLASS);
                         query.getInBackground(fObjectID, new GetCallback<ParseObject>() {
                             public void done(ParseObject parseUpdateObject, ParseException e) {
@@ -414,21 +424,36 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         });
 
     }
+
+    public void alertSessionEnd(){
+        new AlertDialog.Builder(CON)
+                .setCancelable(false)
+                .setTitle("Session Ended")
+                .setMessage("This LeFo Session was closed by Leader")
+                .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        mapsActivity.finish();
+                    }
+                })
+                .setIcon(android.R.drawable.ic_dialog_alert)
+                .show();
+    }
 }
 
 /*import com.google.android.gms.maps.*;
 import com.google.android.gms.maps.model.*;
 import android.app.Activity;
 import android.os.Bundle;
+import android.support.v4.app.FragmentActivity;
 
-class MapsActivity extends Activity implements OnMapReadyCallback {
+public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
 
-        MapFragment mapFragment = (MapFragment) getFragmentManager()
+        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
     }
