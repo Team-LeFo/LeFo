@@ -13,9 +13,19 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ShareActionProvider;
+import android.widget.SimpleAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.parse.DeleteCallback;
+import com.parse.FindCallback;
+import com.parse.ParseException;
+import com.parse.ParseObject;
+import com.parse.ParseQuery;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Random;
 
 
@@ -48,6 +58,17 @@ public class LeadQR extends Activity {
     private ShareActionProvider mShareActionProvider;
 
     Intent sharingIntent;
+
+    //Parse Class Name
+    public static final String PARSE_CLASS = "LeFo_DB";
+    public static final String PARSE_FCLASS = "Followers";
+
+    //Parse Keys
+    public static final String KEY_QRCODE = "QR_CODE";
+    public static final String KEY_CON_CODE = "Con_Code";
+    public static final String KEY_DEVICE = "deviceName";
+    public static final String KEY_isActive = "isActive";
+    public static final String KEY_LOCATION = "LOCATION";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -104,7 +125,23 @@ public class LeadQR extends Activity {
     public void onBackPressed() { //Overriding system back
 
         if (doubleBackToExitPressedOnce) {
-            leadQRActivity.finish();
+            new AlertDialog.Builder(this)
+                    .setCancelable(false)
+                    .setTitle("End Session")
+                    .setMessage("Do you want to end this session?")
+                    .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int which) {
+                            deleteSession();
+                            leadQRActivity.finish();
+                        }
+                    })
+                    .setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.cancel();
+                        }
+                    })
+                    .setIcon(android.R.drawable.ic_dialog_alert)
+                    .show();
             return;
         }
 
@@ -118,6 +155,29 @@ public class LeadQR extends Activity {
                 doubleBackToExitPressedOnce = false;
             }
         }, 2000);
+    }
+
+    private void deleteSession() {
+        ParseQuery query=new ParseQuery(PARSE_CLASS);
+        query.whereEqualTo(KEY_QRCODE, qrcode);
+        query.findInBackground(new FindCallback<ParseObject>() {
+            @Override
+            public void done(List<ParseObject> results, com.parse.ParseException e) {
+                if (e == null) {
+                    for (ParseObject result : results) {
+                        try {
+                            result.delete();
+                        }catch (ParseException e1){
+                            e1.printStackTrace();
+                        }
+                        result.saveInBackground();
+                    }
+                } else {
+                    e.printStackTrace();
+                    System.out.print(e.getMessage());
+                }
+            }
+        });
     }
 
     @Override
