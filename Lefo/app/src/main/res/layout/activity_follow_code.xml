@@ -33,7 +33,7 @@
             android:layout_height="wrap_content"
             android:hint="Enter Code Here"
             android:textColorHint="@color/secondary_text"
-            android:textSize="25sp"
+            android:textSize="@dimen/abc_text_size_button_material"
             android:id="@+id/insertCode"
             android:gravity="center"
             android:inputType="number"

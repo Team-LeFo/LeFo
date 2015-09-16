@@ -3,9 +3,11 @@
     xmlns:tools="http://schemas.android.com/tools" tools:context="com.lmntrx.lefo.LeadQR">
 
     <item
+
         android:id="@+id/menu_item_share"
-        android:showAsAction="ifRoom"
+        android:showAsAction="always"
         android:title="Share"
         android:actionProviderClass=
             "android.widget.ShareActionProvider" />
+
 </menu>

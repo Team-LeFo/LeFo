@@ -4,7 +4,8 @@
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
     android:paddingBottom="@dimen/activity_vertical_margin" tools:context=".MainActivity"
-    android:gravity="center_vertical|center_horizontal">
+    android:gravity="center_vertical|center_horizontal"
+    android:background="@color/background_floating_material_light">
 
     <LinearLayout
         android:orientation="vertical"
@@ -12,13 +13,16 @@
         android:layout_height="match_parent"
         android:weightSum="20"
         android:layout_alignParentTop="true">
-        <ImageView
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_weight="10"
-            android:id="@+id/leadBTN"
-            android:src="@drawable/lead_button"
-            android:onClick="lead"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/maindesc"
+            android:textSize="@dimen/abc_text_size_button_material"
+            android:textColor="@color/accent"
+            android:id="@+id/textView3"
+            android:layout_gravity="center_horizontal"
+            android:layout_weight="1.71" />
 
         <ProgressBar
             android:layout_width="wrap_content"
@@ -26,12 +30,52 @@
             android:id="@+id/progressBar"
             android:layout_gravity="center" />
 
-        <ImageView
+        <TextView
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_weight="10"
-            android:id="@+id/followBTN"
-            android:src="@drawable/follow_button"
+            android:layout_height="wrap_content"
+            android:text="@string/lead"
+            android:textSize="@dimen/abc_text_size_button_material"
+            android:textColor="@color/accent"
+            android:id="@+id/textView4"
+            android:layout_weight="1.71"
+            />
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="LEAD"
+            android:textSize="@dimen/abc_text_size_button_material"
+            android:textColor="@color/texticons"
+            android:id="@+id/button"
+            android:background="@drawable/buttonb"
+            android:layout_weight="1.71"
+            android:layout_gravity="center_horizontal"
+            android:onClick="lead"/>
+
+        <Space
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="3.62" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/follow"
+            android:textSize="@dimen/abc_text_size_button_material"
+            android:textColor="@color/accent"
+            android:id="@+id/textView5"
+            android:layout_weight="1.71" />
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="FOLLOW"
+            android:textSize="@dimen/abc_text_size_button_material"
+            android:textColor="@color/texticons"
+            android:id="@+id/button2"
+            android:background="@drawable/buttono"
+            android:layout_weight="1.71"
+            android:layout_gravity="center_horizontal"
             android:onClick="follow"/>
 
     </LinearLayout>
