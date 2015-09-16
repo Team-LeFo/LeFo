@@ -122,9 +122,7 @@ public class LeadQR extends Activity {
     }
 
     @Override
-    public void onBackPressed() { //Overriding system back
-
-        if (doubleBackToExitPressedOnce) {
+    public void onBackPressed() {
             new AlertDialog.Builder(this)
                     .setCancelable(false)
                     .setTitle("End Session")
@@ -142,19 +140,6 @@ public class LeadQR extends Activity {
                     })
                     .setIcon(android.R.drawable.ic_dialog_alert)
                     .show();
-            return;
-        }
-
-        this.doubleBackToExitPressedOnce = true;
-        Toast.makeText(this, "Please tap BACK again to go back", Toast.LENGTH_SHORT).show();
-
-        new Handler().postDelayed(new Runnable() {
-
-            @Override
-            public void run() {
-                doubleBackToExitPressedOnce = false;
-            }
-        }, 2000);
     }
 
     private void deleteSession() {

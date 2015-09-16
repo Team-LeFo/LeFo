@@ -96,7 +96,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     PowerManager powerManager;
     PowerManager.WakeLock wakeLock;
 
-    String deviceName=MainActivity.DEVICE_NAME;
+    String deviceName = MainActivity.DEVICE_NAME;
+
+    boolean shown = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -108,10 +110,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mapFragment.getMapAsync(this);
 
 
-
-
         //Wake_Lock
-        powerManager = (PowerManager)CON.getSystemService(Context.POWER_SERVICE);
+        powerManager = (PowerManager) CON.getSystemService(Context.POWER_SERVICE);
         wakeLock = powerManager.newWakeLock(PowerManager.FULL_WAKE_LOCK, "My Lock");
 
         code = getIntent().getStringExtra("CODE");
@@ -119,7 +119,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         count = 0;
 
-        isActive=true;
+        isActive = true;
         registerFollower();
 
 
@@ -148,9 +148,27 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                                             //}
                                         }
                                     } else {
-                                        alertSessionEnd();
+                                        /*alertSessionEnd();
                                         e.printStackTrace();
-                                        return;
+                                        try {
+                                            Thread.sleep(5000);
+                                        } catch (InterruptedException e1) {
+                                            e1.printStackTrace();
+                                        }*/
+                                        if (!shown) {
+                                            new AlertDialog.Builder(CON)
+                                                    .setCancelable(false)
+                                                    .setTitle("Session Ended")
+                                                    .setMessage("This LeFo Session was closed by Leader")
+                                                    .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+                                                        public void onClick(DialogInterface dialog, int which) {
+                                                            mapsActivity.finish();
+                                                        }
+                                                    })
+                                                    .setIcon(android.R.drawable.ic_dialog_alert)
+                                                    .show();
+                                            shown = true;
+                                        }
                                     }
                                 }
                             });
@@ -171,7 +189,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             leaderLocation = new LatLng(leaderLoc.getLatitude(), leaderLoc.getLongitude());
             setMarker(map, leaderLocation);
         } else {
-            Toast.makeText(CON, "Failed to Locate", Toast.LENGTH_LONG).show();
+            Toast.makeText(CON, "Failed to Locate. Check Your Connectivity", Toast.LENGTH_LONG).show();
             //Default :D
             LatLng kanjoor = new LatLng(10.141792312058117, 76.43611420148119);
             map.addMarker(new MarkerOptions().position(kanjoor).title("Marker in Random Location"));
@@ -194,7 +212,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         leaderMarkerOptions.position(location);
 
-        leaderMarker=map.addMarker(leaderMarkerOptions);
+        leaderMarker = map.addMarker(leaderMarkerOptions);
         //followerMarker=map.addMarker(followerMarkerOptions);
         CameraPosition cameraPosition = CameraPosition.builder()
                 .target(location)
@@ -210,7 +228,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             map.setTrafficEnabled(true);
             //map.moveCamera(CameraUpdateFactory.newLatLngZoom(location, 16.5f));
             //map.animateCamera(CameraUpdateFactory.newLatLngZoom(location, 16.5f));
-            map.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition),1000, null);
+            map.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition), 1000, null);
             count = 1;
         }
     }
@@ -219,13 +237,13 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     public void onMapReady(GoogleMap map) {
         //leaderMarkerOptions = new MarkerOptions().flat(true).title("Leader's Location").position(leaderLocation);
         //leaderMarker = map.addMarker(leaderMarkerOptions);
-        leaderMarkerOptions=new MarkerOptions()
+        leaderMarkerOptions = new MarkerOptions()
                 .icon(BitmapDescriptorFactory.fromResource(R.drawable.orangemarker))
                 .flat(true)
                 .anchor(0.5f, 0)
                 .rotation(0);
 
-        followerMarkerOptions=new MarkerOptions()
+        followerMarkerOptions = new MarkerOptions()
                 .icon(BitmapDescriptorFactory.fromResource(R.drawable.bluemarker))
                 .flat(true)
                 .anchor(0.5f, 0)
@@ -250,7 +268,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         super.onResume();
         //reset();
         wakeLock.acquire();
-        isActive=true;
+        isActive = true;
         updateFollowerStatus();
     }
 
@@ -258,14 +276,14 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     protected void onPause() {
         super.onPause();
         wakeLock.release();
-        isActive=false;
+        isActive = false;
         updateFollowerStatus();
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        isActive=false;
+        isActive = false;
         updateFollowerStatus();
     }
 
@@ -382,16 +400,16 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         }
     }
 
-    public void registerFollower(){
+    public void registerFollower() {
         ParseObject parseObject = new ParseObject(PARSE_FCLASS);
         parseObject.put(KEY_CON_CODE, code);
-        parseObject.put(KEY_DEVICE, deviceName );
+        parseObject.put(KEY_DEVICE, deviceName);
         parseObject.put(KEY_isActive, isActive);
         parseObject.saveInBackground();
         //Toast.makeText(CON,"Hi from registerfollower()",Toast.LENGTH_LONG).show();
     }
 
-    public void updateFollowerStatus(){
+    public void updateFollowerStatus() {
         ParseQuery<ParseObject> queryID = ParseQuery.getQuery(PARSE_FCLASS);
         queryID.whereEqualTo(KEY_CON_CODE, code);
         queryID.findInBackground(new FindCallback<ParseObject>() {
@@ -425,7 +443,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     }
 
-    public void alertSessionEnd(){
+    public void alertSessionEnd() {
         new AlertDialog.Builder(CON)
                 .setCancelable(false)
                 .setTitle("Session Ended")
