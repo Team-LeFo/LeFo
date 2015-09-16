@@ -17,9 +17,21 @@
         <!-- Bottom Navigationbar color -->
         <item name="android:navigationBarColor">@color/primary_text</item>
 
+        <item name="dropDownListViewStyle">@style/PopupMenuListView</item>
+
+        <item name="android:popupMenuStyle">@style/PopupMenuListView</item>
+
 
 
     </style>
 
+    <!-- OverFlow menu Styles -->
+    <style name="PopupMenuListView" parent="android:Widget.Material.Light.ListView.DropDown">
+        <item name="android:divider">#FF0000</item>
+        <item name="android:dividerHeight">2dp</item>
+        <item name="android:background">#33B5E5</item>
+        <item name="android:popupBackground">#33B5E5</item>
+        <item name="android:textColorPrimary">@color/primary_text</item>
+    </style>
 
 </resources>
