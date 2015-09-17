@@ -19,8 +19,14 @@ import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
+import com.parse.FindCallback;
 import com.parse.Parse;
 import com.parse.ParseAnalytics;
+import com.parse.ParseException;
+import com.parse.ParseObject;
+import com.parse.ParseQuery;
+
+import java.util.List;
 
 
 public class MainActivity extends Activity {
@@ -239,6 +245,8 @@ public class MainActivity extends Activity {
             return Character.toUpperCase(first) + s.substring(1);
         }
     }
+
+
 
 
 }

@@ -33,14 +33,10 @@ public class FollowCode extends Activity {
 
     //Parse Keys
     public static final String KEY_QRCODE = "QR_CODE";
-    public static final String KEY_LOCATION = "LOCATION";
 
     //Parse ObjectID
     public static String objectId = null;
 
-    //Location
-    public static Location leaderLoc = new Location("");
-    Location followerLoc = new Location("");
 
     String code;
     Context followCodeCon;
@@ -49,10 +45,6 @@ public class FollowCode extends Activity {
     ProgressBar mProgressBar;
 
     Activity followCodeActivity=this;
-
-    boolean doubleBackToExitPressedOnce;
-
-    String deviceName=MainActivity.DEVICE_NAME;
 
 
     @Override
@@ -147,25 +139,6 @@ public class FollowCode extends Activity {
                 Toast.makeText(followCodeCon,"Scan Canceled", Toast.LENGTH_LONG).show();
             }
         }
-    }
-
-    @Override
-    public void onBackPressed() {
-        if (doubleBackToExitPressedOnce) {
-            followCodeActivity.finish();
-            return;
-        }
-
-        this.doubleBackToExitPressedOnce = true;
-        Toast.makeText(this, "Please tap BACK again to go back", Toast.LENGTH_SHORT).show();
-
-        new Handler().postDelayed(new Runnable() {
-
-            @Override
-            public void run() {
-                doubleBackToExitPressedOnce = false;
-            }
-        }, 2000);
     }
 
 }

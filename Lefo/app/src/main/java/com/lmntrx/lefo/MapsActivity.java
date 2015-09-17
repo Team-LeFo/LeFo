@@ -289,20 +289,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     @Override
     public void onBackPressed() {
-        if (doubleBackToExitPressedOnce) {
-            //On Back
-            mapsActivity.finish();
-        }
-
-        this.doubleBackToExitPressedOnce = true;
-        Toast.makeText(this, "Please tap BACK again to Exit", Toast.LENGTH_SHORT).show();
-
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                doubleBackToExitPressedOnce = false;
-            }
-        }, 2000);
+        alertSessionEnd();
     }
 
     void getFollowerLoc(GoogleMap map) {
@@ -446,15 +433,44 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     public void alertSessionEnd() {
         new AlertDialog.Builder(CON)
                 .setCancelable(false)
-                .setTitle("Session Ended")
-                .setMessage("This LeFo Session was closed by Leader")
-                .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+                .setTitle("Disconnect")
+                .setMessage("Do you want to disconnect from this session?")
+                .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
-                        mapsActivity.finish();
+                        deleteSession();
+                    }
+                })
+                .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.cancel();
                     }
                 })
                 .setIcon(android.R.drawable.ic_dialog_alert)
                 .show();
+    }
+
+    private void deleteSession() {
+        ParseQuery query=new ParseQuery(PARSE_FCLASS);
+        query.whereEqualTo(KEY_CON_CODE, code);
+        query.findInBackground(new FindCallback<ParseObject>() {
+            @Override
+            public void done(List<ParseObject> results, com.parse.ParseException e) {
+                if (e == null) {
+                    for (ParseObject result : results) {
+                        try {
+                            result.delete();
+                        } catch (ParseException e1) {
+                            e1.printStackTrace();
+                        }
+                        result.saveInBackground();
+                    }
+                } else {
+                    e.printStackTrace();
+                    System.out.print(e.getMessage());
+                }
+            }
+        });
+        mapsActivity.finish();
     }
 }
 

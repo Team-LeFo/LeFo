@@ -53,8 +53,6 @@ public class LeadQR extends Activity {
     //Activity
     public final Activity leadQRActivity = this;
 
-    boolean doubleBackToExitPressedOnce;
-
     private ShareActionProvider mShareActionProvider;
 
     Intent sharingIntent;
@@ -126,7 +124,7 @@ public class LeadQR extends Activity {
             new AlertDialog.Builder(this)
                     .setCancelable(false)
                     .setTitle("End Session")
-                    .setMessage("Do you want to end this session?")
+                    .setMessage("Do you want to end this LeFo Session?")
                     .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int which) {
                             deleteSession();
