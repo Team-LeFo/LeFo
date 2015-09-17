@@ -173,7 +173,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                                 }
                             });
                         }
-                        //getFollowerLoc(map);
+                        getFollowerLoc(map);
                         Log.d("TIMER", "Timer Running");
                     }
                 });
@@ -231,6 +231,14 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             map.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition), 1000, null);
             count = 1;
         }
+    }
+
+    private void setMarker(GoogleMap map, LatLng location, int s) {
+
+        followerMarkerOptions.position(location);
+
+        followerMarker=map.addMarker(followerMarkerOptions);
+
     }
 
     @Override
@@ -349,15 +357,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     private void showFollowerLoc(GoogleMap map) {
         if (followerLocation != null) {
-            setMarker(map, followerLocation);
+            setMarker(map, followerLocation,2);
         } else {
             Toast.makeText(CON, "Failed to Locate You", Toast.LENGTH_LONG).show();
-            //Default :D
-            LatLng kanjoor = new LatLng(10.141792312058117, 76.43611420148119);
-            map.addMarker(new MarkerOptions().position(kanjoor).title("Marker in Random Location"));
-            map.setBuildingsEnabled(true);
-            map.moveCamera(CameraUpdateFactory.newLatLngZoom(kanjoor, 16.5f));
-            map.animateCamera(CameraUpdateFactory.newLatLngZoom(kanjoor, 16.5f));
         }
     }
 
